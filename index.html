@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shajin KP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Nanum+Pen+Script&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Figtree', sans-serif;
+            background: #fff;
+            color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 8vw, 6rem);
+        }
+
+        .wrap {
+            max-width: 680px;
+            width: 100%;
+        }
+
+        .hey {
+            font-family: 'Nanum Pen Script', cursive;
+            font-size: clamp(2.2rem, 5vw, 3rem);
+            line-height: 1;
+            color: #1a1a1a;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: rise .5s .05s ease forwards;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #1a1a1a;
+            margin-bottom: 1.2rem;
+            opacity: 0;
+            animation: rise .5s ease forwards;
+        }
+
+        p:nth-child(2) {
+            animation-delay: .15s;
+        }
+
+        p:nth-child(3) {
+            animation-delay: .2s;
+        }
+
+        p:nth-child(4) {
+            animation-delay: .25s;
+        }
+
+        p:nth-child(5) {
+            animation-delay: .3s;
+        }
+
+        p:nth-child(6) {
+            animation-delay: .35s;
+        }
+
+        p:nth-child(7) {
+            animation-delay: .4s;
+        }
+
+        p:nth-child(8) {
+            animation-delay: .45s;
+        }
+
+        p strong {
+            font-weight: 600;
+        }
+
+        p a {
+            color: #1a1a1a;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-thickness: 1px;
+            transition: opacity .15s;
+        }
+
+        p a:hover {
+            opacity: .5;
+        }
+
+        .connect {
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            margin-top: .2rem;
+        }
+
+        .connect a {
+            color: #1a1a1a;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: opacity .15s;
+        }
+
+        .connect a:hover {
+            opacity: .4;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            font-size: .75rem;
+            color: #aaa;
+            opacity: 0;
+            animation: rise .5s .55s ease forwards;
+        }
+
+        /* ── projects ── */
+        .projects {
+            margin-top: 2.5rem;
+            opacity: 0;
+            animation: rise .5s .5s ease forwards;
+        }
+
+        .projects-label {
+            font-size: .7rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.1rem;
+            padding: 1.1rem 0;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .project-item:last-child {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .project-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.6rem;
+            line-height: 1;
+            overflow: hidden;
+        }
+
+        .project-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .project-name-row {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .project-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-decoration: none;
+            display: inline;
+        }
+
+        a.project-name:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-thickness: 1px;
+        }
+
+        .project-sub {
+            font-size: .88rem;
+            color: #888;
+            margin-top: .2rem;
+            line-height: 1.5;
+        }
+
+        .project-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            margin-top: .5rem;
+            font-size: .78rem;
+            font-weight: 500;
+            color: #bbb;
+            text-decoration: none;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 1px;
+            transition: opacity .15s;
+        }
+
+        .project-cta:hover {
+            opacity: .5;
+        }
+
+        .project-stack {
+            font-size: .8rem;
+            color: #bbb;
+            margin-top: .2rem;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-text {
+            font-size: .72rem;
+            font-weight: 500;
+        }
+
+        .status.active .status-dot {
+            background: #2a9a52;
+        }
+
+        .status.active .status-text {
+            color: #2a9a52;
+        }
+
+        .status.discontinued .status-dot {
+            background: #cc3333;
+        }
+
+        .status.discontinued .status-text {
+            color: #cc3333;
+        }
+
+        #age {
+            font-variant-numeric: tabular-nums;
+            font-family: 'Figtree', monospace;
+            letter-spacing: 0;
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+
+        <p class="hey">Hey there!</p>
+
+        <p>I'm <strong>Shajin KP</strong>.</p>
+        <p><span id="age"></span> yr old from Kerala.</p>
+
+        <p>I make things for the internet. For fun, for work, and sometimes for no reason at all.</p>
+
+        <p>I started building at 15 and never really stopped. Now I work as a product manager, spend my free time
+            building side
+            projects, and lately, most of them are around AI. I also ended up winning <strong>two national
+                hackathons</strong> along the
+            way.</p>
+
+        <p>This is my little corner of the web where I share <a href="#">projects</a> &amp; <a href="#">experiments</a>.
+        </p>
+
+        <p>
+            Feel free to connect with me:
+            <span class="connect">
+                <a href="https://x.com/shajin_shas" target="_blank" rel="noopener" aria-label="X">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117Z" />
+                    </svg>
+                </a>
+                <a href="mailto:shajin.sha10@gmail.com" aria-label="Email">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/shajin-kp/" target="_blank" rel="noopener" aria-label="LinkedIn">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                </a>
+            </span>
+        </p>
+
+        <section class="projects">
+            <p class="projects-label">Projects</p>
+
+            <div class="project-item">
+                <div class="project-icon"><img src="design_lumo_logo.png" alt="DesignLumo" /></div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://designlumo.com" target="_blank"
+                            rel="noopener">DesignLumo</a>
+                        <span class="status active"><span class="status-dot"></span><span
+                                class="status-text">Active</span></span>
+                    </div>
+                    <p class="project-sub">AI design tool for generating editable, on-brand visuals for ads, social
+                        posts, posters, and more. Making $$$ in revenue 💸</p>
+                    <p class="project-stack">Tech: React.js, Express, Gemini, OpenAI API, Fabric.js</p>
+                    <p class="project-stack">Model: Subscription</p>
+                    <a class="project-cta" href="https://designlumo.com" target="_blank" rel="noopener">Visit
+                        designlumo.com</a>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-icon" style="background:#f0f4ff;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="12" width="4" height="9" rx="1.5" fill="#4f7ef7" />
+                        <rect x="10" y="7" width="4" height="14" rx="1.5" fill="#4f7ef7" opacity=".75" />
+                        <rect x="17" y="3" width="4" height="18" rx="1.5" fill="#4f7ef7" opacity=".5" />
+                    </svg>
+                </div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://visitors.designlumo.com/" target="_blank"
+                            rel="noopener">CF Analytics</a>
+                        <span class="status active"><span class="status-dot"></span><span
+                                class="status-text">Active</span></span>
+                    </div>
+                    <p class="project-sub">A wrapper for Cloudflare Pages analytics with a beautiful UI.</p>
+                    <p class="project-stack">Tech: Cloudflare Workers, Analytics API</p>
+                    <p class="project-stack">Model: Free</p>
+                    <a class="project-cta" href="https://visitors.designlumo.com/" target="_blank" rel="noopener">Visit
+                        website</a>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-icon" style="background:#fff;"><img src="isselo_logo.png" alt="Isselo"
+                        style="object-fit:contain;padding:2px;" /></div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://isselo.com" target="_blank" rel="noopener">Isselo</a>
+                        <span class="status active"><span class="status-dot"></span><span
+                                class="status-text">Active</span></span>
+                    </div>
+                    <p class="project-sub">Restaurant SaaS that works on any platform. PM &amp; led this from the ground
+                        up with a small team.</p>
+                    <p class="project-stack">Tech: Flutter</p>
+                    <p class="project-stack">Model: Subscription</p>
+                    <a class="project-cta" href="https://isselo.com" target="_blank" rel="noopener">Visit website</a>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-icon"><img src="goscrel_logo.webp" alt="GoScrel" /></div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://apps.apple.com/in/app/goscrel-request-a-ride/id6444677372"
+                            target="_blank" rel="noopener">GoScrel — Request a Ride</a>
+                        <span class="status discontinued"><span class="status-dot"></span><span
+                                class="status-text">Discontinued</span></span>
+                    </div>
+                    <p class="project-sub">A commission-free ride hailing platform.</p>
+                    <p class="project-stack">Tech: Flutter</p>
+                    <p class="project-stack">Model: —</p>
+                    <a class="project-cta" href="https://apps.apple.com/in/app/goscrel-request-a-ride/id6444677372"
+                        target="_blank" rel="noopener">View on App Store</a>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-icon">🏥</div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://github.com/shajin-sha/CONQUEROR" target="_blank"
+                            rel="noopener">HealthEyes</a>
+                        <span class="status discontinued"><span class="status-dot"></span><span
+                                class="status-text">Discontinued</span></span>
+                    </div>
+                    <p class="project-sub">Hackathon winner at 18, beat university grads while still in school. Track
+                        &amp; report local disease outbreaks, find nearby doctors, get personalized health awareness.
+                    </p>
+                    <p class="project-stack">Tech: Flutter</p>
+                    <p class="project-stack">Model: —</p>
+                    <a class="project-cta" href="https://github.com/shajin-sha/CONQUEROR" target="_blank"
+                        rel="noopener">View on GitHub</a>
+                </div>
+            </div>
+
+            <div class="project-item">
+                <div class="project-icon">🔐</div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://github.com/shajin-sha/hackathon-2k24" target="_blank"
+                            rel="noopener">ScanX</a>
+                        <span class="status discontinued"><span class="status-dot"></span><span
+                                class="status-text">Discontinued</span></span>
+                    </div>
+                    <p class="project-sub">Hackathon winner · Apr 2024. Detects cyber frauds via your contact circle.
+                        Friends report attacks, you get warned. Includes an AI chatbot for cyber security queries.</p>
+                    <p class="project-stack">Tech: Flutter</p>
+                    <p class="project-stack">Model: —</p>
+                    <a class="project-cta" href="https://github.com/shajin-sha/hackathon-2k24" target="_blank"
+                        rel="noopener">View on GitHub</a>
+
+                    <footer>&copy; Shajin KP</footer>
+
+                </div>
+                <script>
+                    const bday = new Date('2005-09-03T00:00:00');
+                    function updateAge() {
+                        const now = new Date();
+                        const diff = (now - bday) / (1000 * 60 * 60 * 24 * 365.25);
+                        document.getElementById('age').textContent = diff.toFixed(9);
+                        requestAnimationFrame(updateAge);
+                    }
+                    updateAge();
+                </script>
+</body>
+
+</html>
