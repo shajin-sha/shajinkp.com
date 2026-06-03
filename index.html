@@ -19,6 +19,14 @@
             padding: 0;
         }
 
+        :root {
+            --accent: #ff6b4a;
+            /* violet — gentle wave */
+            --wave-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='5' viewBox='0 0 13 5'%3E%3Cpath d='M0 3 Q3.25 0.4 6.5 3 T13 3' fill='none' stroke='%237c5cff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            /* teal/blue — tighter wave */
+            --wave-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 3 Q2.5 -0.2 5 3 T10 3' fill='none' stroke='%232ba7a0' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+        }
+
         body {
             font-family: 'Figtree', sans-serif;
             background: #fff;
@@ -33,6 +41,40 @@
         .wrap {
             max-width: 680px;
             width: 100%;
+            position: relative;
+        }
+
+        .clip {
+            position: absolute;
+            top: -3.2rem;
+            right: -1rem;
+            width: clamp(80px, 12vw, 120px);
+            transform: rotate(14deg);
+            pointer-events: none;
+            user-select: none;
+            opacity: 0;
+            animation: clipDrop .7s .2s cubic-bezier(.34, 1.4, .5, 1) forwards;
+            filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .12));
+            z-index: 5;
+        }
+
+        @keyframes clipDrop {
+            from {
+                opacity: 0;
+                transform: rotate(14deg) translateY(-18px) scale(.92);
+            }
+
+            to {
+                opacity: 1;
+                transform: rotate(14deg) translateY(0) scale(1);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .clip {
+                top: -2.4rem;
+                right: -.4rem;
+            }
         }
 
         .hey {
@@ -96,7 +138,43 @@
         }
 
         p a:hover {
-            opacity: .5;
+            opacity: .55;
+        }
+
+        /* inline brand mention (logo + name) */
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            font-weight: 500;
+            white-space: nowrap;
+            text-decoration: none;
+            color: #1a1a1a;
+            background-image: var(--wave-1);
+            background-repeat: repeat-x;
+            background-position: 0 100%;
+            background-size: 13px 5px;
+            padding-bottom: 4px;
+            transition: opacity .15s;
+        }
+
+        .brand:hover {
+            opacity: .55;
+        }
+
+        /* per-link wave variants */
+        .wave-2 {
+            background-image: var(--wave-2) !important;
+            background-size: 10px 6px !important;
+        }
+
+        .brand img {
+            width: 1.05em;
+            height: 1.05em;
+            border-radius: 4px;
+            object-fit: cover;
+            display: inline-block;
+            vertical-align: -2px;
         }
 
         .connect {
@@ -128,35 +206,36 @@
 
         /* ── projects ── */
         .projects {
-            margin-top: 2.5rem;
+            margin-top: 3rem;
             opacity: 0;
             animation: rise .5s .5s ease forwards;
+            position: relative;
         }
 
         .projects-label {
             font-size: .7rem;
-            letter-spacing: .1em;
+            letter-spacing: .14em;
             text-transform: uppercase;
             color: #aaa;
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
         }
 
         .project-item {
             display: flex;
             align-items: flex-start;
             gap: 1.1rem;
-            padding: 1.1rem 0;
+            padding: 1.4rem 0;
             border-top: 1px solid #f0f0f0;
         }
 
-        .project-item:last-child {
+        .project-item:last-of-type {
             border-bottom: 1px solid #f0f0f0;
         }
 
         .project-icon {
             width: 52px;
             height: 52px;
-            border-radius: 12px;
+            border-radius: 13px;
             background: #f4f4f4;
             display: flex;
             align-items: center;
@@ -182,6 +261,7 @@
         .project-name-row {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: .5rem;
         }
 
@@ -200,55 +280,67 @@
         }
 
         .project-sub {
-            font-size: .88rem;
-            color: #888;
-            margin-top: .2rem;
-            line-height: 1.5;
+            font-size: .9rem;
+            color: #777;
+            margin-top: .35rem;
+            line-height: 1.55;
+        }
+
+        .revenue-tag {
+            display: inline-block;
+            margin-top: .6rem;
+            font-size: .82rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .3rem .9rem;
+            margin-top: .6rem;
+        }
+
+        .project-stack {
+            font-size: .78rem;
+            color: #b0b0b0;
+            margin: 0;
+            line-height: 1.4;
         }
 
         .project-cta {
             display: inline-flex;
             align-items: center;
             gap: .3rem;
-            margin-top: .5rem;
+            margin-top: .7rem;
             font-size: .78rem;
             font-weight: 500;
-            color: #bbb;
+            color: #999;
             text-decoration: none;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 1px;
-            transition: opacity .15s;
         }
 
         .project-cta:hover {
-            opacity: .5;
-        }
-
-        .project-stack {
-            font-size: .8rem;
-            color: #bbb;
-            margin-top: .2rem;
-            margin-bottom: 0;
-            line-height: 1.4;
+            color: #1a1a1a;
         }
 
         .status {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: .35rem;
             flex-shrink: 0;
         }
 
         .status-dot {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             flex-shrink: 0;
         }
 
         .status-text {
-            font-size: .72rem;
-            font-weight: 500;
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .02em;
         }
 
         .status.active .status-dot {
@@ -256,21 +348,15 @@
         }
 
         .status.active .status-text {
-            color: #2a9a52;
+            color: #1f7a40;
         }
 
-        .status.discontinued .status-dot {
-            background: #cc3333;
+        .status.acquired .status-dot {
+            background: #c8951a;
         }
 
-        .status.discontinued .status-text {
-            color: #cc3333;
-        }
-
-        #age {
-            font-variant-numeric: tabular-nums;
-            font-family: 'Figtree', monospace;
-            letter-spacing: 0;
+        .status.acquired .status-text {
+            color: #946200;
         }
 
         @keyframes rise {
@@ -290,20 +376,23 @@
 <body>
     <div class="wrap">
 
+        <img class="clip" src="paper_clip.avif" alt="" />
+
         <p class="hey">Hey there!</p>
 
-        <p>I'm <strong>Shajin KP</strong>.</p>
-        <p><span id="age"></span> yr old from Kerala.</p>
+        <p>I'm <strong>Shajin KP</strong>, <span id="age"></span> yr old, from Kerala.</p>
 
-        <p>I make things for the internet. For fun, for work, and sometimes for no reason at all.</p>
+        <p>I build things for the internet. For fun, for work, and sometimes for no reason at all.</p>
 
-        <p>I started building at 15 and never really stopped. Now I work as a product manager, spend my free time
-            building side
-            projects, and lately, most of them are around AI. I also ended up winning <strong>two national
-                hackathons</strong> along the
-            way.</p>
+        <p>I started at 15 and never really stopped. Along the way I won <strong>2x national hackathons</strong> and
+            turned a side project, <a class="brand" href="https://designlumo.com" target="_blank" rel="noopener"><img
+                    src="design_lumo_logo.png" alt="" />DesignLumo</a>, into my <strong>first startup exit</strong>
+            after making <strong>$1,500+ in revenue</strong>.
+        </p>
 
-        <p>This is my little corner of the web where I share <a href="#projects">projects</a>.</p>
+        <p>Today I'm a <strong>Product Engineer</strong> at <a class="brand wave-2" href="https://latelogic.com"
+                target="_blank" rel="noopener"><img src="latelogic_logo.png" alt="" />Latelogic</a>, building mostly
+            around AI and living somewhere between product and code.</p>
 
         <p>
             Feel free to connect with me:
@@ -333,43 +422,53 @@
             <p class="projects-label">Projects</p>
 
             <div class="project-item">
+                <div class="project-icon" style="background:#fff;"><img src="lft_logo.png" alt="LargeFileTransfer"
+                        style="object-fit:contain;padding:2px;" /></div>
+                <div class="project-info">
+                    <div class="project-name-row">
+                        <a class="project-name" href="https://largefiletransfer.com" target="_blank"
+                            rel="noopener">LargeFileTransfer</a>
+                        <span class="status active"><span class="status-dot"></span><span
+                                class="status-text">Active</span></span>
+                    </div>
+                    <p class="project-sub">Send big files fast and secure. Drop a file, share a link. Built for
+                        creators, editors, and teams who deal with files too big for email.</p>
+                    <div class="project-meta">
+                        <p class="project-stack">Tech: Next.js</p>
+                        <p class="project-stack">Model: Freemium</p>
+                    </div>
+                    <a class="project-cta" href="https://largefiletransfer.com" target="_blank" rel="noopener">Visit
+                        largefiletransfer.com
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></a>
+                </div>
+            </div>
+
+            <div class="project-item">
                 <div class="project-icon"><img src="design_lumo_logo.png" alt="DesignLumo" /></div>
                 <div class="project-info">
                     <div class="project-name-row">
                         <a class="project-name" href="https://designlumo.com" target="_blank"
                             rel="noopener">DesignLumo</a>
-                        <span class="status active"><span class="status-dot"></span><span
-                                class="status-text">Active</span></span>
+                        <span class="status acquired"><span class="status-dot"></span><span
+                                class="status-text">Acquired</span></span>
                     </div>
                     <p class="project-sub">AI design tool for generating editable, on-brand visuals for ads, social
-                        posts, posters, and more. Making $$$ in revenue 💸</p>
-                    <p class="project-stack">Tech: React.js, Express, Gemini, OpenAI API, Fabric.js</p>
-                    <p class="project-stack">Model: Subscription</p>
-                    <a class="project-cta" href="https://designlumo.com" target="_blank" rel="noopener">Visit
-                        designlumo.com</a>
-                </div>
-            </div>
-
-            <div class="project-item">
-                <div class="project-icon" style="background:#f0f4ff;">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="12" width="4" height="9" rx="1.5" fill="#4f7ef7" />
-                        <rect x="10" y="7" width="4" height="14" rx="1.5" fill="#4f7ef7" opacity=".75" />
-                        <rect x="17" y="3" width="4" height="18" rx="1.5" fill="#4f7ef7" opacity=".5" />
-                    </svg>
-                </div>
-                <div class="project-info">
-                    <div class="project-name-row">
-                        <a class="project-name" href="https://visitors.designlumo.com/" target="_blank"
-                            rel="noopener">CF Analytics</a>
-                        <span class="status active"><span class="status-dot"></span><span
-                                class="status-text">Active</span></span>
+                        posts, posters, and more. Bootstrapped to <strong>$1.5K+ USD</strong> in revenue and acquired.
+                        My first startup exit.</p>
+                    <span class="revenue-tag">$1.5K+ in revenue</span>
+                    <div class="project-meta">
+                        <p class="project-stack">Tech: React.js, Express, Gemini, OpenAI API, Fabric.js</p>
+                        <p class="project-stack">Model: Subscription</p>
                     </div>
-                    <p class="project-sub">A wrapper for Cloudflare Pages analytics with a beautiful UI.</p>
-                    <p class="project-stack">Tech: Cloudflare Workers, Analytics API</p>
-                    <p class="project-stack">Model: Free</p>
-                    <a class="project-cta" href="https://visitors.designlumo.com/" target="_blank" rel="noopener">Visit
-                        website</a>
+                    <a class="project-cta" href="https://designlumo.com" target="_blank" rel="noopener">Visit
+                        designlumo.com
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></a>
                 </div>
             </div>
 
@@ -384,77 +483,28 @@
                     </div>
                     <p class="project-sub">Restaurant SaaS that works on any platform. PM &amp; led this from the ground
                         up with a small team.</p>
-                    <p class="project-stack">Tech: Flutter</p>
-                    <p class="project-stack">Model: Subscription</p>
-                    <a class="project-cta" href="https://isselo.com" target="_blank" rel="noopener">Visit website</a>
+                    <div class="project-meta">
+                        <p class="project-stack">Tech: Flutter</p>
+                        <p class="project-stack">Model: Subscription</p>
+                    </div>
+                    <a class="project-cta" href="https://isselo.com" target="_blank" rel="noopener">Visit website
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></a>
                 </div>
             </div>
+        </section>
 
-            <div class="project-item">
-                <div class="project-icon"><img src="goscrel_logo.webp" alt="GoScrel" /></div>
-                <div class="project-info">
-                    <div class="project-name-row">
-                        <a class="project-name" href="https://apps.apple.com/in/app/goscrel-request-a-ride/id6444677372"
-                            target="_blank" rel="noopener">GoScrel — Request a Ride</a>
-                        <span class="status discontinued"><span class="status-dot"></span><span
-                                class="status-text">Discontinued</span></span>
-                    </div>
-                    <p class="project-sub">A commission-free ride hailing platform.</p>
-                    <p class="project-stack">Tech: Flutter</p>
-                    <p class="project-stack">Model: —</p>
-                    <a class="project-cta" href="https://apps.apple.com/in/app/goscrel-request-a-ride/id6444677372"
-                        target="_blank" rel="noopener">View on App Store</a>
-                </div>
-            </div>
+        <footer>&copy; Shajin KP</footer>
 
-            <div class="project-item">
-                <div class="project-icon">🏥</div>
-                <div class="project-info">
-                    <div class="project-name-row">
-                        <a class="project-name" href="https://github.com/shajin-sha/CONQUEROR" target="_blank"
-                            rel="noopener">HealthEyes</a>
-                        <span class="status discontinued"><span class="status-dot"></span><span
-                                class="status-text">Discontinued</span></span>
-                    </div>
-                    <p class="project-sub">Hackathon winner at 18, beat university grads while still in school. Track
-                        &amp; report local disease outbreaks, find nearby doctors, get personalized health awareness.
-                    </p>
-                    <p class="project-stack">Tech: Flutter</p>
-                    <p class="project-stack">Model: —</p>
-                    <a class="project-cta" href="https://github.com/shajin-sha/CONQUEROR" target="_blank"
-                        rel="noopener">View on GitHub</a>
-                </div>
-            </div>
+    </div>
 
-            <div class="project-item">
-                <div class="project-icon">🔐</div>
-                <div class="project-info">
-                    <div class="project-name-row">
-                        <a class="project-name" href="https://github.com/shajin-sha/hackathon-2k24" target="_blank"
-                            rel="noopener">ScanX</a>
-                        <span class="status discontinued"><span class="status-dot"></span><span
-                                class="status-text">Discontinued</span></span>
-                    </div>
-                    <p class="project-sub">Hackathon winner · Apr 2024. Detects cyber frauds via your contact circle.
-                        Friends report attacks, you get warned. Includes an AI chatbot for cyber security queries.</p>
-                    <p class="project-stack">Tech: Flutter</p>
-                    <p class="project-stack">Model: —</p>
-                    <a class="project-cta" href="https://github.com/shajin-sha/hackathon-2k24" target="_blank"
-                        rel="noopener">View on GitHub</a>
-
-                    <footer>&copy; Shajin KP</footer>
-
-                </div>
-                <script>
-                    const bday = new Date('2005-09-03T00:00:00');
-                    function updateAge() {
-                        const now = new Date();
-                        const diff = (now - bday) / (1000 * 60 * 60 * 24 * 365.25);
-                        document.getElementById('age').textContent = diff.toFixed(9);
-                        requestAnimationFrame(updateAge);
-                    }
-                    updateAge();
-                </script>
+    <script>
+        const bday = new Date('2005-09-03T00:00:00');
+        const diff = (new Date() - bday) / (1000 * 60 * 60 * 24 * 365.25);
+        document.getElementById('age').textContent = Math.floor(diff);
+    </script>
 </body>
 
 </html>
