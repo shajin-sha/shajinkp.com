@@ -98,7 +98,12 @@
                                 "https://shajinkp.com/project_images/large_file_transfer/lft-5.webp",
                                 "https://shajinkp.com/project_images/large_file_transfer/lft-8.webp",
                                 "https://shajinkp.com/project_images/large_file_transfer/lft-9.webp",
-                                "https://shajinkp.com/project_images/large_file_transfer/lft-10.webp"
+                                "https://shajinkp.com/project_images/large_file_transfer/lft-10.webp",
+                                "https://shajinkp.com/project_images/large_file_transfer/lft-mobile-1.webp",
+                                "https://shajinkp.com/project_images/large_file_transfer/lft-mobile-2.webp",
+                                "https://shajinkp.com/project_images/large_file_transfer/lft-mobile-3.webp",
+                                "https://shajinkp.com/project_images/large_file_transfer/lft-mobile-4.webp",
+                                "https://shajinkp.com/project_images/large_file_transfer/lft-mobile-5.webp"
                             ],
                             "author": { "@id": "https://shajinkp.com/#person" }
                         }
@@ -467,10 +472,11 @@
 
         .project-shots {
             display: flex;
+            align-items: center;
             gap: .7rem;
-            margin-top: 1rem;
+            margin-top: .5rem;
             overflow-x: auto;
-            padding-bottom: .3rem;
+            padding: 20px 2px 36px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
@@ -480,7 +486,7 @@
         }
 
         .project-shots img {
-            height: 320px;
+            height: 360px;
             width: auto;
             flex-shrink: 0;
             border-radius: 16px;
@@ -502,10 +508,100 @@
         /* Desktop/landscape screenshots are wide, so show them shorter.
            They fill their frame, so drop the white backing plate. */
         .project-shots.landscape img {
-            height: 248px;
+            height: 300px;
             background: transparent;
             border: none;
         }
+
+        /* Segmented control: a soft track with a white pill that slides
+           between platforms. Clean and premium, iOS-style. */
+        .gallery-tabs {
+            position: relative;
+            display: inline-flex;
+            gap: .15rem;
+            padding: .25rem;
+            margin-top: 1rem;
+            background: #f0efeb;
+            border-radius: 999px;
+        }
+
+        /* The sliding pill; JS positions it over the active tab. */
+        .gallery-tab-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-radius: 999px;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 3px 10px rgba(0, 0, 0, .07);
+            transition: transform .32s cubic-bezier(.34, 1.15, .4, 1), width .32s cubic-bezier(.34, 1.15, .4, 1);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .gallery-tab {
+            position: relative;
+            z-index: 1;
+            font: inherit;
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            padding: .4rem 1.1rem;
+            border-radius: 999px;
+            border: none;
+            background: transparent;
+            color: #77766e;
+            cursor: pointer;
+            transition: color .2s ease;
+        }
+
+        .gallery-tab:hover {
+            color: #1a1a1a;
+        }
+
+        .gallery-tab.active {
+            color: #1a1a1a;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gallery-tab-indicator {
+                transition: none;
+            }
+        }
+
+        /* When JS is on, only the active panel shows; overrides display:flex. */
+        .project-shots[hidden] {
+            display: none;
+        }
+
+        /* Tabbed panels sit right under the tabs. */
+        .project-gallery .project-shots {
+            margin-top: 0;
+        }
+
+        /* A gentle crossfade when switching panels — smooth but not flashy. */
+        .project-gallery .project-shots:not([hidden]) {
+            animation: galleryFade .25s ease;
+        }
+
+        @keyframes galleryFade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .project-gallery .project-shots:not([hidden]) {
+                animation: none;
+            }
+        }
+
+
 
         /* Image viewer (lightbox) — progressive enhancement, JS-driven. */
         .lightbox {
@@ -775,17 +871,41 @@
                         <p class="project-stack">Tech: Next.js</p>
                         <p class="project-stack">Model: Freemium</p>
                     </div>
-                    <div class="project-shots landscape">
-                        <img src="project_images/large_file_transfer/lft-1.webp" alt="LargeFileTransfer screenshot 1"
-                            loading="lazy" width="1499" height="962" />
-                        <img src="project_images/large_file_transfer/lft-5.webp" alt="LargeFileTransfer screenshot 5"
-                            loading="lazy" width="1499" height="962" />
-                        <img src="project_images/large_file_transfer/lft-8.webp" alt="LargeFileTransfer screenshot 8"
-                            loading="lazy" width="1499" height="962" />
-                        <img src="project_images/large_file_transfer/lft-9.webp" alt="LargeFileTransfer screenshot 9"
-                            loading="lazy" width="1499" height="962" />
-                        <img src="project_images/large_file_transfer/lft-10.webp" alt="LargeFileTransfer screenshot 10"
-                            loading="lazy" width="1499" height="962" />
+                    <div class="project-gallery">
+                        <div class="gallery-tabs" role="tablist" aria-label="LargeFileTransfer screenshots">
+                            <span class="gallery-tab-indicator" aria-hidden="true"></span>
+                            <button class="gallery-tab" type="button" role="tab" data-tab="web">Web</button>
+                            <button class="gallery-tab" type="button" role="tab" data-tab="android">Android</button>
+                        </div>
+                        <div class="project-shots landscape" data-panel="web">
+                            <img src="project_images/large_file_transfer/lft-1.webp"
+                                alt="LargeFileTransfer website screenshot 1" loading="lazy" width="1499" height="962" />
+                            <img src="project_images/large_file_transfer/lft-5.webp"
+                                alt="LargeFileTransfer website screenshot 2" loading="lazy" width="1499" height="962" />
+                            <img src="project_images/large_file_transfer/lft-8.webp"
+                                alt="LargeFileTransfer website screenshot 3" loading="lazy" width="1499" height="962" />
+                            <img src="project_images/large_file_transfer/lft-9.webp"
+                                alt="LargeFileTransfer website screenshot 4" loading="lazy" width="1499" height="962" />
+                            <img src="project_images/large_file_transfer/lft-10.webp"
+                                alt="LargeFileTransfer website screenshot 5" loading="lazy" width="1499" height="962" />
+                        </div>
+                        <div class="project-shots" data-panel="android">
+                            <img src="project_images/large_file_transfer/lft-mobile-1.webp"
+                                alt="LargeFileTransfer Android app screenshot 1" loading="lazy" width="1080"
+                                height="2400" />
+                            <img src="project_images/large_file_transfer/lft-mobile-2.webp"
+                                alt="LargeFileTransfer Android app screenshot 2" loading="lazy" width="1080"
+                                height="2400" />
+                            <img src="project_images/large_file_transfer/lft-mobile-3.webp"
+                                alt="LargeFileTransfer Android app screenshot 3" loading="lazy" width="1080"
+                                height="2400" />
+                            <img src="project_images/large_file_transfer/lft-mobile-4.webp"
+                                alt="LargeFileTransfer Android app screenshot 4" loading="lazy" width="1080"
+                                height="2400" />
+                            <img src="project_images/large_file_transfer/lft-mobile-5.webp"
+                                alt="LargeFileTransfer Android app screenshot 5" loading="lazy" width="1080"
+                                height="2400" />
+                        </div>
                     </div>
                 </div>
             </article>
@@ -886,6 +1006,63 @@
         (function () {
             const el = document.getElementById('year');
             if (el) el.textContent = new Date().getFullYear();
+        })();
+
+        // Platform tabs: toggle between screenshot sets (Web / Android / …).
+        // Without JS every panel stays visible, so nothing is lost for crawlers.
+        (function () {
+            document.querySelectorAll('.project-gallery').forEach(function (gallery) {
+                const tabs = gallery.querySelectorAll('.gallery-tab');
+                const panels = gallery.querySelectorAll('[data-panel]');
+                const indicator = gallery.querySelector('.gallery-tab-indicator');
+                if (tabs.length < 2) return;
+
+                function moveIndicator(tab) {
+                    if (!indicator) return;
+                    indicator.style.width = tab.offsetWidth + 'px';
+                    indicator.style.height = tab.offsetHeight + 'px';
+                    indicator.style.transform =
+                        'translate(' + tab.offsetLeft + 'px,' + tab.offsetTop + 'px)';
+                }
+
+                function activate(name) {
+                    tabs.forEach(function (t) {
+                        const on = t.dataset.tab === name;
+                        t.classList.toggle('active', on);
+                        t.setAttribute('aria-selected', on ? 'true' : 'false');
+                        if (on) moveIndicator(t);
+                    });
+                    panels.forEach(function (p) { p.hidden = p.dataset.panel !== name; });
+                }
+
+                tabs.forEach(function (tab) {
+                    tab.addEventListener('click', function () { activate(tab.dataset.tab); });
+                });
+
+                // Place the pill on the first tab without animating the initial jump.
+                if (indicator) indicator.style.transition = 'none';
+                activate(tabs[0].dataset.tab);
+                if (indicator) {
+                    requestAnimationFrame(function () { indicator.style.transition = ''; });
+                }
+
+                function realign() {
+                    const active = gallery.querySelector('.gallery-tab.active');
+                    if (active) moveIndicator(active);
+                }
+
+                // Keep the pill aligned if the layout reflows (e.g. resize).
+                let raf;
+                window.addEventListener('resize', function () {
+                    cancelAnimationFrame(raf);
+                    raf = requestAnimationFrame(realign);
+                });
+
+                // Re-align once the web font loads, since tab widths can shift.
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(realign);
+                }
+            });
         })();
 
         // Screenshot image viewer (lightbox). Clicking a project screenshot
