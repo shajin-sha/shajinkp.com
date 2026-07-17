@@ -501,6 +501,19 @@
             margin-right: auto;
         }
 
+        /* On small screens, let the screenshots start under the logo (the
+           card's left edge) instead of under the text, so they get more
+           room. Offset = icon width (52px) + the card's flex gap (1.1rem). */
+        @media (max-width: 640px) {
+            .project-shots {
+                margin-left: calc(-52px - 1.1rem);
+            }
+
+            .project-gallery .project-shots {
+                margin-left: calc(-52px - 1.1rem);
+            }
+        }
+
         .project-shots img {
             cursor: zoom-in;
         }
