@@ -256,6 +256,11 @@
                 top: -2.4rem;
                 right: -.4rem;
             }
+
+            /* keep the greeting clear of the clip on narrow phones */
+            .hey {
+                padding-right: 4.5rem;
+            }
         }
 
         .hey {
@@ -322,11 +327,55 @@
             opacity: .55;
         }
 
-        /* inline brand mention (logo + name) */
+        /* One-line intro: the thing to read first. */
+        .lede {
+            font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+            line-height: 1.45;
+            font-weight: 500;
+            letter-spacing: -.012em;
+            text-wrap: balance;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Supporting prose sits a step quieter than the lede. */
+        .wrap>p:not(.hey):not(.lede) {
+            color: #444;
+        }
+
+        .wrap>p strong {
+            color: #1a1a1a;
+        }
+
+        /* Contact row: quiet links instead of a sentence. */
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem 1.4rem;
+            margin-top: 1.6rem;
+            font-size: .85rem;
+            opacity: 0;
+            animation: rise .5s .3s ease forwards;
+        }
+
+        .links a {
+            color: #6f6f6f;
+            text-decoration: none;
+            transition: color .15s;
+        }
+
+        .links a::after {
+            content: " \2197";
+            font-size: .8em;
+        }
+
+        .links a:hover {
+            color: #1a1a1a;
+        }
+
+        /* inline brand mention (logo + name). Plain inline (not flex) so the
+           name stays on the text baseline instead of riding above it. */
         .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: .3rem;
+            display: inline;
             font-weight: 500;
             white-space: nowrap;
             text-decoration: none;
@@ -357,7 +406,8 @@
             border-radius: 4px;
             object-fit: cover;
             display: inline-block;
-            vertical-align: -2px;
+            vertical-align: -.15em;
+            margin-right: .3em;
         }
 
         footer {
@@ -813,29 +863,26 @@
 
         <img class="clip" src="paper_clip.avif" alt="" />
 
-        <p class="hey">Hey there!</p>
+        <p class="hey">Hi, glad you&rsquo;re here.</p>
 
-        <p>I'm <strong>Shajin KP</strong>, <span id="age">20</span> yr old, from Kerala.</p>
+        <p class="lede">I'm Shajin KP. I'm <span id="age">20</span>, and I design, build and ship products with
+            taste.</p>
 
-        <p>I'm a product designer and PM who writes code. What I care about most is <strong>taste</strong>: how a
-            product feels, and how well it actually works.</p>
-
-        <p>I started at 15 and never really stopped. Along the way I won <strong>2x national hackathons</strong> and
-            turned a side project, <a class="brand" href="https://designlumo.com" target="_blank" rel="noopener"><img
-                    src="design_lumo_logo.webp" alt="" />DesignLumo</a>, into my <strong>first startup exit</strong>
-            after making <strong>$1,500+ in revenue</strong>.
+        <p>I started building at 15 and never really stopped. Along the way I won <strong>2x national
+                hackathons</strong> and turned a side project, <a class="brand" href="https://designlumo.com"
+                target="_blank" rel="noopener"><img src="design_lumo_logo.webp" alt="" />DesignLumo</a>, into my
+            <strong>first startup exit</strong> after reaching <strong>around $400 in monthly revenue</strong>.
         </p>
 
-        <p>Today I'm a <strong>Product Engineer</strong> at <a class="brand wave-2" href="https://latelogic.com"
-                target="_blank" rel="noopener"><img src="latelogic_logo.webp" alt="" />Latelogic</a>, where we build
-            cool products for the internet.</p>
+        <p>Today I'm a Product Engineer at <a class="brand" href="https://latelogic.com" target="_blank"
+                rel="noopener"><img src="latelogic_logo.webp" alt="" />Latelogic</a>, building cool products for the
+            internet. What I care about most is how a product feels, and how well it actually works.</p>
 
-        <p>
-            Feel free to connect with me on
+        <nav class="links" aria-label="Contact">
             <a href="https://www.linkedin.com/in/shajin-kp/" target="_blank" rel="noopener">LinkedIn</a>
-            or drop me an
-            <a href="mailto:shajin.sha10@gmail.com">email</a>.
-        </p>
+            <a href="https://twitter.com/shajin_shas" target="_blank" rel="noopener">X / Twitter</a>
+            <a href="mailto:shajin.sha10@gmail.com">Email</a>
+        </nav>
 
         <section class="projects" id="projects">
             <p class="projects-label">Projects</p>
