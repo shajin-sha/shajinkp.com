@@ -387,6 +387,14 @@
             color: var(--text);
         }
 
+        .links a.copied {
+            color: var(--text);
+        }
+
+        .links a.copied::after {
+            content: " \2713";
+        }
+
         /* inline brand mention (logo + name). Plain inline (not flex) so the
            name stays on the text baseline instead of riding above it. */
         .brand {
@@ -431,6 +439,53 @@
             color: var(--muted);
             opacity: 0;
             animation: rise .5s .55s ease forwards;
+        }
+
+        /* ── hero texture: a soft dot grid with a whisper of grain, fading out
+           before the projects so the rest of the page stays clean ── */
+        :root {
+            --dot: rgba(26, 26, 26, .13);
+            --grain-opacity: .05;
+            --grain-blend: multiply;
+        }
+
+        :root[data-theme="dark"] {
+            --dot: rgba(255, 244, 225, .085);
+            --grain-opacity: .06;
+            --grain-blend: screen;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: min(900px, 115vh);
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-bg::before,
+        .hero-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            /* strongest behind the intro, dissolving toward the edges and bottom */
+            -webkit-mask-image: radial-gradient(ellipse 75% 65% at 30% 22%, #000 0%, rgba(0, 0, 0, .55) 45%, transparent 78%);
+            mask-image: radial-gradient(ellipse 75% 65% at 30% 22%, #000 0%, rgba(0, 0, 0, .55) 45%, transparent 78%);
+        }
+
+        .hero-bg::before {
+            background-image: radial-gradient(circle at center, var(--dot) 1px, transparent 1.3px);
+            background-size: 22px 22px;
+            background-position: 11px 11px;
+            transition: opacity .4s ease;
+        }
+
+        .hero-bg::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 180px 180px;
+            opacity: var(--grain-opacity);
+            mix-blend-mode: var(--grain-blend);
         }
 
         /* ── pendant lamp (theme switch) ── */
@@ -482,9 +537,11 @@
             transform-origin: 50% 0;
         }
 
-        /* barely-there drift, like air moving in the room */
+        /* barely-there drift, like air moving in the room; in the dark it also
+           leans toward the cursor (--lamp-lean is set from script) */
         .lamp-sway {
             animation: lampIdle 8s ease-in-out infinite;
+            rotate: var(--lamp-lean, 0deg);
         }
 
         /* the shadow the lamp and cord cast on the page while the room is lit */
@@ -497,8 +554,9 @@
             filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
         }
 
-        .lamp.swing .lamp-swing {
-            animation: lampNudge 1.5s cubic-bezier(.3, .6, .4, 1);
+        /* swing angle comes from the physics in script */
+        .lamp-swing {
+            transform: rotate(var(--lamp-angle, 0deg));
         }
 
         .lamp-cord {
@@ -507,13 +565,15 @@
             left: 50%;
             width: 1.5px;
             height: calc(var(--cord) + 1px);
-            transform: translateX(-50%);
+            transform: translateX(-50%) scaleY(var(--cord-scale, 1));
+            transform-origin: 50% 0;
             background: linear-gradient(#262626, #3c3c3c);
         }
 
         .lamp-body {
             position: absolute;
             top: var(--cord);
+            translate: 0 var(--lamp-bob, 0px);
             left: 0;
             width: var(--lamp-w);
             height: auto;
@@ -540,6 +600,7 @@
             position: absolute;
             left: 50%;
             top: var(--bulb-y);
+            translate: 0 var(--lamp-bob, 0px);
             width: calc(var(--lamp-w) * 1.9);
             aspect-ratio: 1;
             transform: translate(-50%, -50%);
@@ -578,6 +639,7 @@
             left: calc(50% + min(1040px, 100% - 2 * var(--side-pad)) / 2 - var(--lamp-right) - var(--lamp-w) / 2);
             top: var(--bulb-y);
             animation: lampIdle 8s ease-in-out infinite;
+            rotate: var(--lamp-lean, 0deg);
         }
 
         .beam-swing {
@@ -585,8 +647,9 @@
             top: 0;
         }
 
-        .lamp-room.swing .beam-swing {
-            animation: lampNudge 1.5s cubic-bezier(.3, .6, .4, 1);
+        .beam-swing {
+            transform: rotate(var(--lamp-angle, 0deg));
+            translate: 0 var(--lamp-bob, 0px);
         }
 
         /* Light falling off with distance, brightest just under the bulb.
@@ -634,13 +697,14 @@
         }
 
         /* cursor-following hint: a tiny pill, only for fine pointers that can hover */
-        .lamp-tip {
+        .follow-tip {
             position: fixed;
             left: 0;
             top: 0;
             z-index: 30;
             display: none;
             padding: .34rem .62rem .38rem;
+            text-align: center;
             border-radius: 999px;
             background: #1a1a1a;
             color: #fff;
@@ -654,23 +718,128 @@
             scale: .6;
             rotate: -6deg;
             transform-origin: 0 0;
-            transition: opacity .14s ease, scale .32s cubic-bezier(.3, 1.6, .5, 1), rotate .32s cubic-bezier(.3, 1.6, .5, 1);
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: opacity .14s ease, scale .32s cubic-bezier(.3, 1.6, .5, 1), rotate .32s cubic-bezier(.3, 1.6, .5, 1),
+                width .38s cubic-bezier(.3, 1.25, .5, 1), background-color .3s ease, color .3s ease;
             will-change: transform;
         }
 
+        /* keep the pill's own motion during the page-wide theme transition */
+        html.theme-anim .follow-tip {
+            transition: opacity .14s ease, scale .32s cubic-bezier(.3, 1.6, .5, 1), rotate .32s cubic-bezier(.3, 1.6, .5, 1),
+                width .38s cubic-bezier(.3, 1.25, .5, 1), background-color .3s ease, color .3s ease !important;
+        }
+
+        .follow-tip-text {
+            display: inline-block;
+        }
+
+        /* icon-only pill: compact and round */
+        .follow-tip.icon-only {
+            padding: .36rem .5rem;
+        }
+
+        .tip-icon {
+            display: block;
+            width: 22px;
+            height: 12px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* the chevrons breathe outward, hinting at sideways motion */
+        .tip-drag path:first-child {
+            animation: tipNudgeL 1.4s ease-in-out infinite;
+        }
+
+        .tip-drag path:last-child {
+            animation: tipNudgeR 1.4s ease-in-out infinite;
+        }
+
+        @keyframes tipNudgeL {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(-1.6px);
+            }
+        }
+
+        @keyframes tipNudgeR {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(1.6px);
+            }
+        }
+
+        /* keyboard hint inside the pill */
+        .follow-tip kbd {
+            display: inline-block;
+            min-width: 1.35em;
+            margin-left: .45rem;
+            padding: .16rem .3rem .14rem;
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, .1);
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .14);
+            font: inherit;
+            font-size: .62rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            vertical-align: 1px;
+        }
+
+        :root[data-theme="dark"] .follow-tip kbd {
+            border-color: rgba(0, 0, 0, .16);
+            background: rgba(0, 0, 0, .05);
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .12);
+        }
+
+        /* new text settles in while the pill reshapes around it */
+        .follow-tip-text.swap {
+            animation: tipSwap .32s cubic-bezier(.2, .8, .3, 1);
+        }
+
+        @keyframes tipSwap {
+            from {
+                opacity: 0;
+                filter: blur(4px);
+                transform: translateY(3px);
+            }
+
+            to {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+
         @media (hover: hover) and (pointer: fine) {
-            .lamp-tip {
+            .follow-tip {
                 display: block;
             }
         }
 
-        .lamp-tip.show {
+        .follow-tip.show {
             opacity: 1;
             scale: 1;
             rotate: 0deg;
         }
 
-        :root[data-theme="dark"] .lamp-tip {
+        :root[data-theme="dark"] .follow-tip {
             background: #fbf3e2;
             color: #1a1a1a;
         }
@@ -684,33 +853,6 @@
 
             50% {
                 transform: rotate(.5deg);
-            }
-        }
-
-        /* a light tug on the cord: small swing, quickly settles */
-        @keyframes lampNudge {
-            0% {
-                transform: rotate(0);
-            }
-
-            16% {
-                transform: rotate(2.6deg);
-            }
-
-            40% {
-                transform: rotate(-1.5deg);
-            }
-
-            62% {
-                transform: rotate(.7deg);
-            }
-
-            82% {
-                transform: rotate(-.25deg);
-            }
-
-            100% {
-                transform: rotate(0);
             }
         }
 
@@ -882,6 +1024,25 @@
 
         .project-shots img {
             cursor: zoom-in;
+        }
+
+        /* with a mouse, the strips can be dragged sideways */
+        @media (hover: hover) and (pointer: fine) {
+
+            .project-shots,
+            .project-shots img {
+                cursor: grab;
+            }
+
+            .project-shots img {
+                -webkit-user-drag: none;
+                user-select: none;
+            }
+
+            .project-shots.grabbing,
+            .project-shots.grabbing img {
+                cursor: grabbing;
+            }
         }
 
         /* Desktop/landscape screenshots are wide, so show them shorter.
@@ -1155,6 +1316,9 @@
 </head>
 
 <body>
+    <!-- Faint dot grid + grain behind the intro; purely decorative. -->
+    <div class="hero-bg" aria-hidden="true"></div>
+
     <!-- The lamp's pool of light, clipped to the page so it can never cause sideways scroll. -->
     <div class="lamp-room" aria-hidden="true">
         <span class="beam-sway"><span class="beam-swing"><span class="lamp-pool"></span></span></span>
@@ -1270,7 +1434,7 @@
         <nav class="links" aria-label="Contact">
             <a href="https://www.linkedin.com/in/shajin-kp/" target="_blank" rel="noopener">LinkedIn</a>
             <a href="https://twitter.com/shajin_shas" target="_blank" rel="noopener">X / Twitter</a>
-            <a href="mailto:shajin.sha10@gmail.com">Email</a>
+            <a class="copy-email" href="mailto:shajin.sha10@gmail.com">Email</a>
         </nav>
 
         <section class="projects" id="projects">
@@ -1492,8 +1656,8 @@
 
     </div>
 
-    <!-- Cursor-following hint for the lamp (decorative; the button has its own aria-label). -->
-    <span class="lamp-tip" aria-hidden="true"></span>
+    <!-- Cursor-following hint pill (decorative; targets have their own labels). -->
+    <span class="follow-tip" aria-hidden="true"></span>
 
     <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image viewer">
         <button class="lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
@@ -1505,6 +1669,121 @@
     <script>
         /* Progressive enhancement only — nothing here affects SEO.
            All content above is static HTML that crawlers read directly. */
+
+        // Follow-pill: a tiny label that trails the cursor over chosen elements.
+        // Hosts can nest (the lamp's cord sits inside the lamp); the innermost wins.
+        const followTip = (function () {
+            const tip = document.querySelector('.follow-tip');
+            const ease = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const hosts = [];
+            let current = null, raf = 0, mx = 0, my = 0, px = 0, py = 0;
+
+            // below-right of the cursor, flipped left/up near the screen edge
+            function target() {
+                const w = tip.offsetWidth, h = tip.offsetHeight;
+                let x = mx + 16, y = my + 20;
+                if (x + w > window.innerWidth - 8) x = mx - 14 - w;
+                if (y + h > window.innerHeight - 8) y = my - 14 - h;
+                return [x, y];
+            }
+
+            function frame() {
+                const t = target();
+                const k = ease ? .28 : 1;
+                px += (t[0] - px) * k;
+                py += (t[1] - py) * k;
+                tip.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0)';
+                const settled = Math.abs(t[0] - px) < .3 && Math.abs(t[1] - py) < .3;
+                raf = (current || !settled) ? requestAnimationFrame(frame) : 0;
+            }
+
+            const label = document.createElement('span');
+            label.className = 'follow-tip-text';
+            if (tip) tip.appendChild(label);
+
+            // Swap the text; if the pill is on screen, morph its width from the
+            // old size to the new one and let the new words fade in.
+            const icons = {
+                // left/right chevrons for draggable strips
+                drag: '<svg class="tip-icon tip-drag" viewBox="0 0 22 12" aria-hidden="true">' +
+                    '<path d="M6 2 2 6l4 4" /><path d="M16 2l4 4-4 4" /></svg>'
+            };
+
+            // `text` is "words", ["words", "K"] (K shows as a keycap) or { icon: "drag" }.
+            function setText(text, animate) {
+                const icon = text && text.icon ? text.icon : '';
+                const words = icon ? '' : Array.isArray(text) ? text[0] : text;
+                const key = Array.isArray(text) ? text[1] : '';
+                const sig = icon + '\u0000' + words + '\u0000' + key;
+                if (label.dataset.sig === sig) return;
+                label.dataset.sig = sig;
+                const from = tip.offsetWidth;
+                tip.classList.toggle('icon-only', !!icon);
+                label.textContent = words;
+                if (icon) label.innerHTML = icons[icon];
+                if (key) {
+                    const k = document.createElement('kbd');
+                    k.textContent = key;
+                    label.appendChild(k);
+                }
+                tip.style.width = 'auto';
+                const to = tip.offsetWidth;
+                if (!animate || !from) { tip.style.width = to + 'px'; return; }
+                tip.style.width = from + 'px';
+                void tip.offsetWidth;
+                tip.style.width = to + 'px';
+                label.classList.remove('swap');
+                void label.offsetWidth;
+                label.classList.add('swap');
+            }
+
+            function show(h) {
+                const visible = !!current;
+                current = h;
+                setText(h.text(), visible);
+            }
+
+            function attach(el, text) {
+                if (!tip || !el) return;
+                const h = { el: el, text: text };
+                hosts.push(h);
+                el.addEventListener('pointerenter', function (e) {
+                    if (e.pointerType !== 'mouse') return;
+                    mx = e.clientX; my = e.clientY;
+                    const wasHidden = !current;
+                    show(h);
+                    if (wasHidden) {
+                        const t = target();
+                        px = t[0]; py = t[1];   // appear at the cursor, then follow
+                    }
+                    tip.classList.add('show');
+                    if (!raf) raf = requestAnimationFrame(frame);
+                });
+                el.addEventListener('pointermove', function (e) {
+                    mx = e.clientX; my = e.clientY;
+                });
+                el.addEventListener('pointerleave', function (e) {
+                    if (current !== h) return;
+                    // moving back out to an enclosing host keeps the pill, with its text
+                    const outer = hosts.find(function (o) { return o !== h && o.el.contains(el) && o.el.contains(e.relatedTarget); });
+                    if (outer) { show(outer); return; }
+                    current = null;
+                    tip.classList.remove('show');
+                });
+            }
+
+            // re-read the current host's text (e.g. after the theme flips)
+            function refresh() {
+                if (current) setText(current.text(), true);
+            }
+
+            // show a one-off message in place of the host text
+            function say(text) {
+                if (current) setText(text, true);
+            }
+
+            return { attach: attach, refresh: refresh, say: say };
+        })();
 
         // Pendant lamp: click to switch between light and dark.
         (function () {
@@ -1563,74 +1842,285 @@
 
             apply(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
 
-            // ── Hint that follows the cursor while it's over the lamp.
-            const tip = document.querySelector('.lamp-tip');
-            const easeTip = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            let tipOn = false, tipRaf = 0, mx = 0, my = 0, px = 0, py = 0;
+            // ── Physics: the lamp is a damped pendulum on a slightly elastic cord.
+            // Its hanging point moves with the page: sideways when the window is
+            // resized (the layout re-centres), up/down when the page scrolls.
+            // The pivot's acceleration drives the swing and the bob, like a real pendant.
+            const physics = (function () {
+                const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const targets = [lamp, room].filter(Boolean);
+                const cordEl = lamp.querySelector('.lamp-cord');
+                const OMEGA2 = 12;      // g/L: about a 1.8 s swing period
+                const DAMP = 1.5;       // air friction on the swing (settles in ~3 s)
+                const L_PX = 2400;      // effective length that converts pivot accel to swing
+                const TILT = .06;       // no pendant hangs perfectly true: couples scroll into swing
+                const K_BOB = 620, C_BOB = 9, BOB_GAIN = .05, BOB_MAX = 6;
+                const MAX_ANGLE = .26;  // ~15deg
 
-            function tipText() {
-                if (tip) tip.textContent = root.getAttribute('data-theme') === 'dark' ? 'lights off?' : 'lights on?';
-            }
+                let th = 0, w = 0, y = 0, vy = 0;   // angle, angular speed, bob, bob speed
+                let raf = 0, lastT = 0;
+                let px = null, py = null, pvx = 0, pvy = 0;   // pivot position & velocity
 
-            // where the label wants to be: below-right of the cursor, flipped
-            // to the left/up when it would run off the screen
-            function tipTarget() {
-                const w = tip.offsetWidth, h = tip.offsetHeight;
-                let x = mx + 16, y = my + 20;
-                if (x + w > window.innerWidth - 8) x = mx - 14 - w;
-                if (y + h > window.innerHeight - 8) y = my - 14 - h;
-                return [x, y];
-            }
+                function pivot() {
+                    const r = lamp.getBoundingClientRect();
+                    return [r.left + r.width / 2, r.top];
+                }
 
-            function tipFrame() {
-                const t = tipTarget();
-                const k = easeTip ? .28 : 1;
-                px += (t[0] - px) * k;
-                py += (t[1] - py) * k;
-                tip.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0)';
-                const settled = Math.abs(t[0] - px) < .3 && Math.abs(t[1] - py) < .3;
-                tipRaf = (tipOn || !settled) ? requestAnimationFrame(tipFrame) : 0;
-            }
+                function write() {
+                    const deg = (th * 57.2958).toFixed(3) + 'deg';
+                    const bob = y.toFixed(2) + 'px';
+                    const cordLen = cordEl ? cordEl.offsetHeight || 1 : 1;
+                    targets.forEach(function (el) {
+                        el.style.setProperty('--lamp-angle', deg);
+                        el.style.setProperty('--lamp-bob', bob);
+                    });
+                    lamp.style.setProperty('--cord-scale', ((cordLen + y) / cordLen).toFixed(4));
+                }
 
-            if (tip) {
-                lamp.addEventListener('pointerenter', function (e) {
-                    if (e.pointerType !== 'mouse') return;
-                    tipText();
-                    mx = e.clientX; my = e.clientY;
-                    const t = tipTarget();
-                    px = t[0]; py = t[1];   // appear at the cursor, then follow
-                    tipOn = true;
-                    tip.classList.add('show');
-                    if (!tipRaf) tipRaf = requestAnimationFrame(tipFrame);
-                });
-                lamp.addEventListener('pointermove', function (e) {
-                    mx = e.clientX; my = e.clientY;
-                });
-                lamp.addEventListener('pointerleave', function () {
-                    tipOn = false;
-                    tip.classList.remove('show');
-                });
-            }
+                function step(dt) {
+                    const p = pivot();
+                    if (px === null) { px = p[0]; py = p[1]; }
+                    // pivot velocity and acceleration, lightly smoothed against jitter
+                    const vx = (p[0] - px) / dt, vyp = (p[1] - py) / dt;
+                    const ax = (vx - pvx) / dt, ay = (vyp - pvy) / dt;
+                    pvx = pvx * .5 + vx * .5;
+                    pvy = pvy * .5 + vyp * .5;
+                    px = p[0]; py = p[1];
 
-            lamp.addEventListener('click', function () {
+                    const axc = Math.max(-40000, Math.min(40000, ax));
+                    const ayc = Math.max(-40000, Math.min(40000, ay));
+
+                    // swing: gravity, damping, and the pivot accelerating under it
+                    const alpha = -OMEGA2 * Math.sin(th) - DAMP * w
+                        - (axc / L_PX) * Math.cos(th)
+                        - (ayc / L_PX) * Math.sin(th + TILT) * .5;
+                    w += alpha * dt;
+                    th += w * dt;
+                    if (th > MAX_ANGLE) { th = MAX_ANGLE; w *= -.4; }
+                    if (th < -MAX_ANGLE) { th = -MAX_ANGLE; w *= -.4; }
+
+                    // bob: the cord stretches when the pivot jerks upward, and back
+                    const ab = -K_BOB * y - C_BOB * vy - ayc * BOB_GAIN;
+                    vy += ab * dt;
+                    y += vy * dt;
+                    if (y > BOB_MAX) { y = BOB_MAX; vy = 0; }
+                    if (y < -BOB_MAX * .5) { y = -BOB_MAX * .5; vy = 0; }
+                }
+
+                function frame(t) {
+                    const dt = Math.min(.034, Math.max(.001, (t - lastT) / 1000 || .016));
+                    lastT = t;
+                    // two substeps keep the spring stable at low frame rates
+                    step(dt / 2);
+                    step(dt / 2);
+                    write();
+                    const moving = Math.abs(th) > .0006 || Math.abs(w) > .002 || Math.abs(y) > .02 ||
+                        Math.abs(vy) > .05 || Math.abs(pvx) > 1 || Math.abs(pvy) > 1;
+                    if (moving) {
+                        raf = requestAnimationFrame(frame);
+                    } else {
+                        raf = 0;
+                        th = w = y = vy = 0;
+                        write();
+                    }
+                }
+
+                function wake() {
+                    if (still || raf) return;
+                    lastT = performance.now();
+                    const p = pivot();
+                    if (px === null) { px = p[0]; py = p[1]; }
+                    raf = requestAnimationFrame(frame);
+                }
+
+                window.addEventListener('scroll', wake, { passive: true });
+                window.addEventListener('resize', wake);
+
+                return {
+                    // angular kick in rad/s
+                    push: function (v) {
+                        if (still) return;
+                        w += v;
+                        wake();
+                    }
+                };
+            })();
+
+            function toggle() {
                 const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
                 root.classList.add('theme-anim');
                 playClick(next === 'dark');
                 apply(next);
-                tipText();
+                followTip.refresh();
 
                 try { localStorage.setItem('theme', next); } catch (e) { }
 
-                // restart the swing even on rapid clicks
-                [lamp, room].forEach(function (el) {
-                    if (!el) return;
-                    el.classList.remove('swing');
-                    void el.offsetWidth;
-                    el.classList.add('swing');
-                });
+                // a flick of the switch gives the lamp a small push
+                physics.push(next === 'dark' ? .26 : -.26);
 
                 clearTimeout(animTimer);
                 animTimer = setTimeout(function () { root.classList.remove('theme-anim'); }, 500);
+            }
+
+            lamp.addEventListener('click', toggle);
+
+            followTip.attach(lamp, function () {
+                return [root.getAttribute('data-theme') === 'dark' ? 'lights off?' : 'lights on?', 'L'];
+            });
+
+            // Press L to flip the lamp (not while typing, not with modifier keys).
+            document.addEventListener('keydown', function (e) {
+                if (e.key !== 'l' && e.key !== 'L') return;
+                if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+                const t = e.target;
+                if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+                toggle();
+            });
+
+            // In the dark, the lamp leans a few degrees toward the cursor, so the
+            // pool of light drifts with you. Eases back to centre in light mode.
+            const leanOK = window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+                !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (leanOK) {
+                let leanTarget = 0, lean = 0, leanRaf = 0, cx = 0, cy = 0;
+
+                function leanAim() {
+                    if (root.getAttribute('data-theme') !== 'dark') { leanTarget = 0; return; }
+                    const r = lamp.getBoundingClientRect();
+                    const dx = cx - (r.left + r.width / 2);
+                    const dy = Math.max(cy - r.top, 140);
+                    // rotate the bottom toward the cursor; keep it subtle
+                    leanTarget = Math.max(-7, Math.min(7, -Math.atan2(dx, dy) * 57.3 * .22));
+                }
+
+                function leanFrame() {
+                    lean += (leanTarget - lean) * .06;
+                    root.style.setProperty('--lamp-lean', lean.toFixed(3) + 'deg');
+                    leanRaf = Math.abs(leanTarget - lean) > .01 ? requestAnimationFrame(leanFrame) : 0;
+                }
+
+                function kick() {
+                    leanAim();
+                    if (!leanRaf) leanRaf = requestAnimationFrame(leanFrame);
+                }
+
+                document.addEventListener('pointermove', function (e) {
+                    if (e.pointerType !== 'mouse') return;
+                    cx = e.clientX; cy = e.clientY;
+                    kick();
+                }, { passive: true });
+                lamp.addEventListener('click', kick);
+                document.addEventListener('keydown', function (e) { if (e.key === 'l' || e.key === 'L') setTimeout(kick, 0); });
+            }
+        })();
+
+        // Screenshot strips: drag sideways with a mouse, with a little momentum.
+        // Touch keeps native scrolling; a plain click still opens the lightbox.
+        (function () {
+            if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+            const glide = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            document.querySelectorAll('.project-shots').forEach(function (strip) {
+                let drag = null, moved = false, raf = 0, v = 0;
+
+                followTip.attach(strip, function () { return { icon: 'drag' }; });
+
+                strip.addEventListener('pointerdown', function (e) {
+                    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+                    cancelAnimationFrame(raf);
+                    drag = { x: e.clientX, left: strip.scrollLeft, lastX: e.clientX, lastT: performance.now() };
+                    moved = false;
+                    v = 0;
+                });
+
+                window.addEventListener('pointermove', function (e) {
+                    if (!drag) return;
+                    const dx = e.clientX - drag.x;
+                    if (!moved && Math.abs(dx) > 4) {
+                        moved = true;
+                        strip.classList.add('grabbing');
+                    }
+                    if (!moved) return;
+                    strip.scrollLeft = drag.left - dx;
+                    // velocity in px per frame, smoothed
+                    const now = performance.now();
+                    const dt = Math.max(1, now - drag.lastT);
+                    v = v * .6 + ((drag.lastX - e.clientX) / dt * 16) * .4;
+                    drag.lastX = e.clientX;
+                    drag.lastT = now;
+                });
+
+                window.addEventListener('pointerup', function () {
+                    if (!drag) return;
+                    drag = null;
+                    strip.classList.remove('grabbing');
+                    if (!moved || !glide) return;
+                    (function coast() {
+                        v *= .94;
+                        if (Math.abs(v) < .3) return;
+                        strip.scrollLeft += v;
+                        raf = requestAnimationFrame(coast);
+                    })();
+                });
+
+                // a drag that ends over a screenshot must not open the lightbox
+                strip.addEventListener('click', function (e) {
+                    if (!moved) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    moved = false;
+                }, true);
+            });
+        })();
+
+        // Email: copy the address instead of forcing open a mail app.
+        (function () {
+            const link = document.querySelector('.copy-email');
+            if (!link) return;
+            const address = link.getAttribute('href').replace(/^mailto:/, '');
+            const label = link.textContent;
+            let resetTimer;
+
+            function fallback(text) {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    const ok = document.execCommand('copy');
+                    ta.remove();
+                    return ok;
+                } catch (e) { return false; }
+            }
+
+            function copy(text) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text).then(
+                        function () { return true; },
+                        function () { return fallback(text); });
+                }
+                return Promise.resolve(fallback(text));
+            }
+
+            followTip.attach(link, function () { return 'copy email'; });
+
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                copy(address).then(function (ok) {
+                    if (!ok) { window.location.href = link.href; return; }
+                    followTip.say('copied!');
+                    link.textContent = 'Copied';
+                    link.classList.add('copied');
+                    clearTimeout(resetTimer);
+                    resetTimer = setTimeout(function () {
+                        link.textContent = label;
+                        link.classList.remove('copied');
+                        followTip.refresh();
+                    }, 1600);
+                });
             });
         })();
 
