@@ -184,9 +184,17 @@
     }
     </script>
 
-    <!-- Favicon: inline SVG "S" mark -->
-    <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%231a1a1a'/%3E%3Ctext x='50' y='71' font-family='Georgia,serif' font-size='64' font-weight='600' fill='%23faf9f7' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+    <!-- Favicon: a tiny pendant lamp, unlit in light mode and glowing in dark mode.
+         PNG first for browsers without SVG favicons; script below swaps both with the theme. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-light-32.png" id="favicon-png" />
+    <link rel="icon" type="image/svg+xml" href="favicon-light.svg" id="favicon-svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <script>
+        if (document.documentElement.getAttribute('data-theme') === 'dark') {
+            document.getElementById('favicon-png').href = 'favicon-dark-32.png';
+            document.getElementById('favicon-svg').href = 'favicon-dark.svg';
+        }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -916,6 +924,38 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
         }
 
+        /* glossy app icon: script tilts it toward the cursor and moves a glare
+           (under the cursor, or from the lamp's side in the dark) */
+        .project-icon {
+            position: relative;
+        }
+
+        .project-icon::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            /* glare toward the light, soft falloff into shade on the far side */
+            background:
+                radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, var(--ga, 0)) 0%, rgba(255, 255, 255, calc(var(--ga, 0) * .35)) 28%, rgba(255, 255, 255, 0) 62%),
+                linear-gradient(var(--gdir, 180deg), rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, var(--gs, 0)) 100%);
+            transition: opacity .3s ease;
+            opacity: 0;
+        }
+
+        .project-icon.tilting {
+            transition: transform .12s ease-out, box-shadow .12s ease-out;
+        }
+
+        .project-icon.tilting::after {
+            opacity: 1;
+        }
+
+        .project-icon.settle {
+            transition: transform .6s cubic-bezier(.3, 1.5, .5, 1), box-shadow .6s ease;
+        }
+
         .project-icon img {
             width: 100%;
             height: 100%;
@@ -1147,6 +1187,8 @@
 
 
         /* Image viewer (lightbox) — progressive enhancement, JS-driven. */
+        /* The viewer: the backdrop fades on its own layer while the image travels
+           from its spot in the gallery to the centre (sizes/offsets set in script). */
         .lightbox {
             position: fixed;
             inset: 0;
@@ -1155,36 +1197,65 @@
             align-items: center;
             justify-content: center;
             padding: 4vmin;
+            visibility: hidden;
+            pointer-events: none;
+            cursor: zoom-out;
+        }
+
+        .lightbox.open,
+        .lightbox.closing {
+            visibility: visible;
+        }
+
+        .lightbox.open {
+            pointer-events: auto;
+        }
+
+        .lightbox::before {
+            content: "";
+            position: absolute;
+            inset: 0;
             background: rgba(30, 27, 22, .72);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             opacity: 0;
-            pointer-events: none;
-            transition: opacity .2s ease;
-            cursor: zoom-out;
+            transition: opacity .32s ease;
         }
 
-        .lightbox.open {
-            opacity: 1;
-            pointer-events: auto;
+        .lightbox.open::before {
+            opacity: var(--backdrop, 1);
         }
 
         .lightbox img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
+            position: relative;
+            display: block;
+            max-width: none;
             border-radius: 18px;
             box-shadow: 0 24px 60px rgba(0, 0, 0, .4);
-            transform: scale(.92);
-            transition: transform .2s ease;
+            transform-origin: 50% 50%;
+            will-change: transform;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
-        .lightbox.open img {
-            transform: scale(1);
+        .lightbox img.flying {
+            transition: transform .46s cubic-bezier(.2, .85, .25, 1), border-radius .46s ease, opacity .3s ease;
+        }
+
+        .lightbox-close,
+        .lightbox-nav {
+            opacity: 0;
+            transition: opacity .25s ease, background .15s ease;
+        }
+
+        .lightbox.open .lightbox-close,
+        .lightbox.open .lightbox-nav {
+            opacity: 1;
         }
 
         .lightbox-close {
+            z-index: 1;
             position: absolute;
             top: max(1rem, 3vmin);
             right: max(1rem, 3vmin);
@@ -1200,7 +1271,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background .15s ease;
         }
 
         .lightbox-close:hover {
@@ -1208,6 +1278,7 @@
         }
 
         .lightbox-nav {
+            z-index: 1;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -1223,7 +1294,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background .15s ease;
         }
 
         .lightbox-nav:hover {
@@ -1838,6 +1908,11 @@
                 lamp.setAttribute('aria-pressed', String(dark));
                 lamp.setAttribute('aria-label', dark ? 'Turn the lamp off (light mode)' : 'Turn the lamp on (dark mode)');
                 if (meta) meta.setAttribute('content', dark ? '#11100e' : '#ffffff');
+                // the tab icon's lamp switches with the page
+                const favSvg = document.getElementById('favicon-svg');
+                const favPng = document.getElementById('favicon-png');
+                if (favSvg) favSvg.href = dark ? 'favicon-dark.svg' : 'favicon-light.svg';
+                if (favPng) favPng.href = dark ? 'favicon-dark-32.png' : 'favicon-light-32.png';
             }
 
             apply(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
@@ -2073,6 +2148,64 @@
             });
         })();
 
+        // Project icons: tilt in 3D toward the cursor with a moving glare.
+        // In the dark the glare comes from the lamp's side, brighter when the
+        // icon tips toward it.
+        (function () {
+            if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const MAX = 14;
+            const lampEl = document.querySelector('.lamp-body');
+
+            document.querySelectorAll('.project-icon').forEach(function (icon) {
+                function move(e) {
+                    const r = icon.getBoundingClientRect();
+                    const nx = Math.max(-.5, Math.min(.5, (e.clientX - r.left) / r.width - .5));
+                    const ny = Math.max(-.5, Math.min(.5, (e.clientY - r.top) / r.height - .5));
+                    const ry = nx * 2 * MAX, rx = -ny * 2 * MAX;
+                    icon.style.transform = 'perspective(320px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) scale(1.07)';
+                    icon.style.boxShadow = (-ry * .45).toFixed(1) + 'px ' + (7 + rx * .35).toFixed(1) + 'px 18px rgba(0, 0, 0, .2)';
+
+                    let gx = (nx + .5) * 100, gy = (ny + .5) * 100, ga = .42;
+                    if (document.documentElement.getAttribute('data-theme') === 'dark' && lampEl) {
+                        // glare sits on the edge facing the lamp
+                        const l = lampEl.getBoundingClientRect();
+                        const dx = (l.left + l.width / 2) - (r.left + r.width / 2);
+                        const dy = (l.top + l.height * .75) - (r.top + r.height / 2);
+                        const d = Math.hypot(dx, dy) || 1;
+                        gx = 50 + dx / d * 46;
+                        gy = 50 + dy / d * 46;
+                        // tipping the face toward the lamp catches more light
+                        const facing = (nx * dx + ny * dy) / d;
+                        ga = Math.max(.12, Math.min(.6, .3 + facing * .7));
+                    }
+                    // shade runs away from the glare point
+                    const sdir = Math.atan2(50 - gx, -(50 - gy)) * 57.2958;
+                    icon.style.setProperty('--gdir', sdir.toFixed(1) + 'deg');
+                    icon.style.setProperty('--gs', (document.documentElement.getAttribute('data-theme') === 'dark' ? .2 : .1).toString());
+                    icon.style.setProperty('--gx', gx.toFixed(1) + '%');
+                    icon.style.setProperty('--gy', gy.toFixed(1) + '%');
+                    icon.style.setProperty('--ga', ga.toFixed(3));
+                }
+
+                icon.addEventListener('pointerenter', function (e) {
+                    if (e.pointerType !== 'mouse') return;
+                    icon.classList.remove('settle');
+                    icon.classList.add('tilting');
+                    move(e);
+                });
+                icon.addEventListener('pointermove', function (e) {
+                    if (e.pointerType === 'mouse') move(e);
+                });
+                icon.addEventListener('pointerleave', function () {
+                    icon.classList.remove('tilting');
+                    icon.classList.add('settle');
+                    icon.style.transform = '';
+                    icon.style.boxShadow = '';
+                });
+            });
+        })();
+
         // Email: copy the address instead of forcing open a mail app.
         (function () {
             const link = document.querySelector('.copy-email');
@@ -2195,8 +2328,9 @@
             });
         })();
 
-        // Screenshot image viewer (lightbox). Clicking a project screenshot
-        // opens it enlarged; clicking anywhere else on a card follows its link.
+        // Screenshot image viewer (lightbox). A screenshot grows out of its spot in
+        // the gallery into the viewer and shrinks back on close. Arrows/keys slide
+        // between shots; on touch you can swipe sideways, or swipe down to close.
         (function () {
             const box = document.getElementById('lightbox');
             if (!box) return;
@@ -2204,45 +2338,137 @@
             const closeBtn = box.querySelector('.lightbox-close');
             const prevBtn = box.querySelector('.lightbox-nav.prev');
             const nextBtn = box.querySelector('.lightbox-nav.next');
+            const motion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             let lastFocus = null;
             let group = [];   // images in the currently open project's gallery
             let index = 0;    // position within that gallery
+            let hiddenThumb = null;
+            let closeTimer = 0;
+
+            // size the big image to fit the viewer, from the thumbnail's proportions
+            function fit(img) {
+                const pad = parseFloat(getComputedStyle(box).paddingLeft) || 0;
+                // on wider screens, keep clear of the side arrows and close button
+                const roomy = box.clientWidth > 640;
+                const aw = box.clientWidth - pad * 2 - (roomy ? 136 : 0);
+                const ah = box.clientHeight - pad * 2 - (roomy ? 56 : 0);
+                const nw = img.naturalWidth || img.width || 1, nh = img.naturalHeight || img.height || 1;
+                const k = Math.min(aw / nw, ah / nh, 1);
+                return [nw * k, nh * k];
+            }
 
             function render() {
                 const img = group[index];
                 bigImg.src = img.currentSrc || img.src;
                 bigImg.alt = img.alt || '';
+                const size = fit(img);
+                bigImg.style.width = size[0] + 'px';
+                bigImg.style.height = size[1] + 'px';
                 // Only show arrows when there's more than one screenshot.
                 const many = group.length > 1;
                 prevBtn.hidden = !many;
                 nextBtn.hidden = !many;
             }
 
-            function step(delta) {
-                if (group.length < 2) return;
-                index = (index + delta + group.length) % group.length; // wraps around
-                render();
+            // transform that places the centred big image exactly over `thumb`
+            function overThumb(thumb) {
+                const t = thumb.getBoundingClientRect();
+                if (!t.width || t.right < 0 || t.left > innerWidth || t.bottom < 0 || t.top > innerHeight) return null;
+                const bw = parseFloat(bigImg.style.width);
+                // the big image sits centred in the viewer before any transform
+                const cx = box.clientWidth / 2, cy = box.clientHeight / 2;
+                const sx = t.width / bw;
+                return 'translate(' + (t.left + t.width / 2 - cx).toFixed(1) + 'px,' +
+                    (t.top + t.height / 2 - cy).toFixed(1) + 'px) scale(' + sx.toFixed(4) + ')';
+            }
+
+            function setThumbHidden(thumb) {
+                if (hiddenThumb) hiddenThumb.style.visibility = '';
+                hiddenThumb = thumb;
+                if (thumb) thumb.style.visibility = 'hidden';
+            }
+
+            function fly(transform, opacity) {
+                bigImg.classList.add('flying');
+                bigImg.style.transform = transform;
+                bigImg.style.opacity = opacity == null ? '' : opacity;
+            }
+
+            function jump(transform, opacity) {
+                bigImg.classList.remove('flying');
+                bigImg.style.transform = transform;
+                bigImg.style.opacity = opacity == null ? '' : opacity;
+                void bigImg.offsetWidth;
             }
 
             function open(img) {
+                clearTimeout(closeTimer);
+                box.classList.remove('closing');
                 lastFocus = document.activeElement;
                 const gallery = img.closest('.project-shots');
                 group = gallery ? Array.from(gallery.querySelectorAll('img')) : [img];
                 index = Math.max(0, group.indexOf(img));
                 render();
+                box.style.removeProperty('--backdrop');
                 box.classList.add('open');
                 box.setAttribute('aria-hidden', 'false');
                 document.body.style.overflow = 'hidden';
-                closeBtn.focus();
+
+                const from = motion && overThumb(img);
+                if (from) {
+                    jump(from);
+                    setThumbHidden(img);
+                    requestAnimationFrame(function () { fly('none'); });
+                } else {
+                    jump('scale(.94)', 0);
+                    requestAnimationFrame(function () { fly('none', 1); });
+                }
+                closeBtn.focus({ preventScroll: true });
             }
 
             function close() {
+                if (!box.classList.contains('open')) return;
+                const thumb = group[index];
+                // bring the current shot into view in its strip so it can land there
+                const strip = thumb && thumb.closest('.project-shots');
+                if (strip && thumb.offsetParent) {
+                    const tr = thumb.getBoundingClientRect(), sr = strip.getBoundingClientRect();
+                    strip.scrollLeft += (tr.left + tr.width / 2) - (sr.left + sr.width / 2);
+                }
+                setThumbHidden(null);
+                const to = motion && thumb && overThumb(thumb);
                 box.classList.remove('open');
+                box.classList.add('closing');
                 box.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = '';
-                // Clear the source after the fade so it doesn't flash on reopen.
-                setTimeout(function () { if (!box.classList.contains('open')) bigImg.src = ''; }, 220);
-                if (lastFocus && lastFocus.focus) lastFocus.focus();
+                if (to) {
+                    thumb.style.visibility = 'hidden';
+                    hiddenThumb = thumb;
+                    fly(to);
+                } else {
+                    fly('scale(.94)', 0);
+                }
+                closeTimer = setTimeout(function () {
+                    box.classList.remove('closing');
+                    setThumbHidden(null);
+                    jump('none');
+                    bigImg.src = '';
+                }, motion ? 470 : 0);
+                if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+            }
+
+            // slide to the next/previous shot: out one side, in from the other
+            function step(delta) {
+                if (group.length < 2) return;
+                index = (index + delta + group.length) % group.length; // wraps around
+                if (!motion) { render(); return; }
+                const off = 46 * delta;
+                fly('translateX(' + (-off) + 'px)', 0);
+                setTimeout(function () {
+                    render();
+                    jump('translateX(' + off + 'px)', 0);
+                    fly('none', 1);
+                }, 140);
             }
 
             // Delegate clicks on any project screenshot.
@@ -2271,6 +2497,63 @@
                 if (e.key === 'Escape') close();
                 else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
                 else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+            });
+
+            // Touch: the image follows the finger. Sideways past a threshold changes
+            // shot; downward closes (the backdrop lightens as you pull); else spring back.
+            let touch = null;
+            bigImg.addEventListener('pointerdown', function (e) {
+                if (e.pointerType === 'mouse' || !box.classList.contains('open')) return;
+                bigImg.setPointerCapture(e.pointerId);
+                touch = { x: e.clientX, y: e.clientY, dx: 0, dy: 0, axis: '' };
+                jump('none');
+            });
+            bigImg.addEventListener('pointermove', function (e) {
+                if (!touch) return;
+                touch.dx = e.clientX - touch.x;
+                touch.dy = e.clientY - touch.y;
+                if (!touch.axis && Math.hypot(touch.dx, touch.dy) > 8) {
+                    touch.axis = Math.abs(touch.dx) > Math.abs(touch.dy) ? 'x' : 'y';
+                }
+                if (touch.axis === 'x') {
+                    bigImg.style.transform = 'translateX(' + touch.dx + 'px)';
+                } else if (touch.axis === 'y') {
+                    const dy = Math.max(0, touch.dy);
+                    const k = Math.min(1, dy / 400);
+                    bigImg.style.transform = 'translateY(' + dy + 'px) scale(' + (1 - k * .25).toFixed(3) + ')';
+                    box.style.setProperty('--backdrop', (1 - k).toFixed(3));
+                }
+            });
+            function endTouch() {
+                if (!touch) return;
+                const t = touch;
+                touch = null;
+                box.style.removeProperty('--backdrop');
+                if (t.axis === 'x' && Math.abs(t.dx) > 60 && group.length > 1) {
+                    const dir = t.dx < 0 ? 1 : -1;
+                    index = (index + dir + group.length) % group.length;
+                    fly('translateX(' + (t.dx < 0 ? -innerWidth : innerWidth) * .6 + 'px)', 0);
+                    setTimeout(function () {
+                        render();
+                        jump('translateX(' + (t.dx < 0 ? 60 : -60) + 'px)', 0);
+                        fly('none', 1);
+                    }, 160);
+                } else if (t.axis === 'y' && t.dy > 90) {
+                    close();
+                } else {
+                    fly('none', 1);
+                }
+            }
+            bigImg.addEventListener('pointerup', endTouch);
+            bigImg.addEventListener('pointercancel', endTouch);
+
+            // keep the open image sized to the window
+            window.addEventListener('resize', function () {
+                if (box.classList.contains('open') && group[index]) {
+                    const size = fit(group[index]);
+                    bigImg.style.width = size[0] + 'px';
+                    bigImg.style.height = size[1] + 'px';
+                }
             });
         })();
     </script>

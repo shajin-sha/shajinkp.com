@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- lamp off, on a warm paper tile -->
+  <defs>
+    <linearGradient id="shade" x1="0" x2="1">
+      <stop offset="0" stop-color="#111"/>
+      <stop offset=".4" stop-color="#3a3a39"/>
+      <stop offset="1" stop-color="#0c0c0c"/>
+    </linearGradient>
+    <radialGradient id="bulb" cx=".38" cy=".35" r=".75">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".6" stop-color="#ece8df"/>
+      <stop offset="1" stop-color="#bdb6a8"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="#f4efe6"/>
+  <path d="M32 0V15" stroke="#1f1f1f" stroke-width="2.6"/>
+  <path d="M28.5 12h7l.8 4h-8.6z" fill="#1c1c1c"/>
+  <path d="M32 15C19 15 11 27 9 42h46C53 27 45 15 32 15z" fill="url(#shade)"/>
+  <ellipse cx="32" cy="42" rx="23" ry="3.6" fill="#cfc9be"/>
+  <circle cx="32" cy="48" r="7.2" fill="url(#bulb)" stroke="#a9a293" stroke-width="1"/>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- lamp on, glowing in a dark room -->
+  <defs>
+    <linearGradient id="shade" x1="0" x2="1">
+      <stop offset="0" stop-color="#1a1918"/>
+      <stop offset=".4" stop-color="#46433f"/>
+      <stop offset="1" stop-color="#141312"/>
+    </linearGradient>
+    <radialGradient id="halo" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffd27a" stop-opacity=".75"/>
+      <stop offset=".45" stop-color="#ffb84a" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#ffb04a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bulb" cx=".5" cy=".55" r=".6">
+      <stop offset="0" stop-color="#fff6d6"/>
+      <stop offset=".5" stop-color="#ffd067"/>
+      <stop offset="1" stop-color="#ee9a2f"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" x2="1">
+      <stop offset="0" stop-color="#e3a650"/>
+      <stop offset=".5" stop-color="#fff1c8"/>
+      <stop offset="1" stop-color="#e3a650"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="#15120f"/>
+  <circle cx="32" cy="47" r="20" fill="url(#halo)"/>
+  <path d="M32 0V15" stroke="#5a544b" stroke-width="2.6"/>
+  <path d="M28.5 12h7l.8 4h-8.6z" fill="#3a3632"/>
+  <path d="M32 15C19 15 11 27 9 42h46C53 27 45 15 32 15z" fill="url(#shade)"/>
+  <ellipse cx="32" cy="42" rx="23" ry="3.6" fill="url(#rim)"/>
+  <circle cx="32" cy="48" r="7.2" fill="url(#bulb)"/>
+</svg>
