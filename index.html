@@ -12,6 +12,17 @@
     <meta name="author" content="Shajin KP" />
     <link rel="canonical" href="https://shajinkp.com/" />
     <meta name="theme-color" content="#ffffff" />
+    <!-- Apply the saved (or system) theme before first paint so dark mode never flashes. -->
+    <script>
+        (function () {
+            var t;
+            try { t = localStorage.getItem('theme'); } catch (e) { }
+            if (t !== 'dark' && t !== 'light') {
+                t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -180,7 +191,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Nanum+Pen+Script&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap"
         rel="stylesheet" />
     <style>
         *,
@@ -189,6 +200,61 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        :root {
+            color-scheme: light;
+            --pad-top: clamp(4.5rem, 9vw, 7rem);
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --text-2: #444;
+            --text-3: #6b6b6b;
+            --muted: #6f6f6f;
+            --line: #f0f0f0;
+            --icon-bg: #f4f4f4;
+            --link: #2563eb;
+            --shot-line: #e7e2d6;
+            --shot-bg: #fff;
+            --shot-edge: rgba(0, 0, 0, .07);
+            --shot-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px -6px rgba(0, 0, 0, .12);
+            --track: #f0efeb;
+            --pill: #ffffff;
+            --pill-shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 3px 10px rgba(0, 0, 0, .07);
+            --ok: #2a9a52;
+            --ok-text: #1f7a40;
+            --sold: #c8951a;
+            --sold-text: #946200;
+        }
+
+        /* Lamp on: a warm, low-light room. */
+        :root[data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #11100e;
+            --text: #eee9e1;
+            --text-2: #bdb6aa;
+            --text-3: #a39c91;
+            --muted: #8c857a;
+            --line: #23211d;
+            --icon-bg: #1f1d1a;
+            --link: #8fb4ff;
+            --shot-line: rgba(255, 255, 255, .08);
+            --shot-bg: #1a1916;
+            --shot-edge: rgba(255, 255, 255, .08);
+            --shot-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 28px -6px rgba(0, 0, 0, .6);
+            --track: #1f1d1a;
+            --pill: #34312c;
+            --pill-shadow: 0 1px 2px rgba(0, 0, 0, .4);
+            --ok: #3fbf6e;
+            --ok-text: #6fd497;
+            --sold: #e0ad3a;
+            --sold-text: #e8c06a;
+        }
+
+        /* Briefly animate every color during a theme switch. */
+        html.theme-anim *,
+        html.theme-anim *::before,
+        html.theme-anim *::after {
+            transition: background-color .4s ease, color .4s ease, border-color .4s ease, box-shadow .4s ease !important;
         }
 
         :root {
@@ -201,13 +267,13 @@
 
         body {
             font-family: 'Geist', sans-serif;
-            background-color: #ffffff;
-            color: #1a1a1a;
+            background-color: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 8vw, 6rem);
+            padding: var(--pad-top) var(--side-pad);
             position: relative;
         }
 
@@ -218,65 +284,14 @@
         }
 
         /* Keep prose at a readable measure even though the page is wide. */
-        .wrap>p,
-        .hey {
+        .wrap>p {
             max-width: 640px;
-        }
-
-        .clip {
-            position: absolute;
-            top: -3.2rem;
-            right: -1rem;
-            width: clamp(80px, 12vw, 120px);
-            transform: rotate(14deg);
-            pointer-events: none;
-            user-select: none;
-            opacity: 1;
-            animation: clipDrop .7s .2s cubic-bezier(.34, 1.4, .5, 1) backwards;
-            filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .12));
-            z-index: 5;
-        }
-
-        @keyframes clipDrop {
-            from {
-                opacity: 0;
-                transform: rotate(14deg) translateY(-18px) scale(.92);
-                filter: blur(10px) drop-shadow(0 10px 14px rgba(0, 0, 0, .12));
-            }
-
-            to {
-                opacity: 1;
-                transform: rotate(14deg) translateY(0) scale(1);
-                filter: blur(0) drop-shadow(0 10px 14px rgba(0, 0, 0, .12));
-            }
-        }
-
-        @media (max-width: 520px) {
-            .clip {
-                top: -2.4rem;
-                right: -.4rem;
-            }
-
-            /* keep the greeting clear of the clip on narrow phones */
-            .hey {
-                padding-right: 4.5rem;
-            }
-        }
-
-        .hey {
-            font-family: 'Nanum Pen Script', cursive;
-            font-size: clamp(2.2rem, 5vw, 3rem);
-            line-height: 1;
-            color: #1a1a1a;
-            margin-bottom: 2rem;
-            opacity: 0;
-            animation: rise .5s .05s ease forwards;
         }
 
         p {
             font-size: .9rem;
             line-height: 1.75;
-            color: #1a1a1a;
+            color: var(--text);
             margin-bottom: 1.2rem;
             opacity: 0;
             animation: rise .5s ease forwards;
@@ -315,7 +330,7 @@
         }
 
         p a {
-            color: #1a1a1a;
+            color: var(--text);
             font-weight: 500;
             text-decoration: underline;
             text-underline-offset: 3px;
@@ -338,12 +353,12 @@
         }
 
         /* Supporting prose sits a step quieter than the lede. */
-        .wrap>p:not(.hey):not(.lede) {
-            color: #444;
+        .wrap>p:not(.lede) {
+            color: var(--text-2);
         }
 
         .wrap>p strong {
-            color: #1a1a1a;
+            color: var(--text);
         }
 
         /* Contact row: quiet links instead of a sentence. */
@@ -358,7 +373,7 @@
         }
 
         .links a {
-            color: #6f6f6f;
+            color: var(--muted);
             text-decoration: none;
             transition: color .15s;
         }
@@ -369,7 +384,7 @@
         }
 
         .links a:hover {
-            color: #1a1a1a;
+            color: var(--text);
         }
 
         /* inline brand mention (logo + name). Plain inline (not flex) so the
@@ -379,7 +394,7 @@
             font-weight: 500;
             white-space: nowrap;
             text-decoration: none;
-            color: #1a1a1a;
+            color: var(--text);
             /* wavy underline — commented out for now
             background-image: var(--wave-1);
             background-repeat: repeat-x;
@@ -413,9 +428,290 @@
         footer {
             margin-top: 3.5rem;
             font-size: .75rem;
-            color: #6f6f6f;
+            color: var(--muted);
             opacity: 0;
             animation: rise .5s .55s ease forwards;
+        }
+
+        /* ── pendant lamp (theme switch) ── */
+        :root {
+            --side-pad: clamp(1.5rem, 8vw, 6rem);
+            --lamp-w: 78px;
+            --lamp-right: 1.5rem;
+            --cord: calc(var(--pad-top) - 1.5rem);
+            /* bulb centre, measured from the top of the lamp body (viewBox 96 units) */
+            --bulb-y: calc(var(--cord) + var(--lamp-w) * .75);
+        }
+
+        @media (max-width: 520px) {
+            :root {
+                --lamp-w: 52px;
+                --cord: 1.3rem;
+                --lamp-right: 0rem;
+            }
+        }
+
+        .lamp {
+            position: absolute;
+            top: calc(-1 * var(--pad-top));
+            right: var(--lamp-right);
+            z-index: 6;
+            width: var(--lamp-w);
+            height: calc(var(--cord) + var(--lamp-w) * .9);
+            padding: 0;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .lamp:focus-visible {
+            outline: none;
+        }
+
+        .lamp:focus-visible .lamp-body {
+            outline: 2px solid var(--link);
+            outline-offset: 4px;
+            border-radius: 12px;
+        }
+
+        .lamp-sway,
+        .lamp-swing {
+            position: absolute;
+            inset: 0;
+            transform-origin: 50% 0;
+        }
+
+        /* barely-there drift, like air moving in the room */
+        .lamp-sway {
+            animation: lampIdle 8s ease-in-out infinite;
+        }
+
+        /* the shadow the lamp and cord cast on the page while the room is lit */
+        .lamp-swing {
+            filter: drop-shadow(14px 20px 7px rgba(0, 0, 0, .13));
+            transition: filter .4s ease;
+        }
+
+        :root[data-theme="dark"] .lamp-swing {
+            filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+        }
+
+        .lamp.swing .lamp-swing {
+            animation: lampNudge 1.5s cubic-bezier(.3, .6, .4, 1);
+        }
+
+        .lamp-cord {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1.5px;
+            height: calc(var(--cord) + 1px);
+            transform: translateX(-50%);
+            background: linear-gradient(#262626, #3c3c3c);
+        }
+
+        .lamp-body {
+            position: absolute;
+            top: var(--cord);
+            left: 0;
+            width: var(--lamp-w);
+            height: auto;
+            display: block;
+            overflow: visible;
+        }
+
+        /* switching off: the filament fades out with a short afterglow */
+        .lamp-lit,
+        .lamp-glow {
+            opacity: 0;
+            transition: opacity .32s ease-in;
+        }
+
+        /* switching on: a quick, slightly soft warm-up */
+        :root[data-theme="dark"] .lamp-lit,
+        :root[data-theme="dark"] .lamp-glow {
+            opacity: 1;
+            transition: opacity .14s cubic-bezier(.2, .8, .3, 1);
+        }
+
+        /* small halo around the bulb, behind the shade */
+        .lamp-glow {
+            position: absolute;
+            left: 50%;
+            top: var(--bulb-y);
+            width: calc(var(--lamp-w) * 1.9);
+            aspect-ratio: 1;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 226, 160, .55) 0%, rgba(255, 205, 120, .2) 30%, rgba(255, 190, 100, .06) 52%, rgba(255, 185, 95, 0) 70%);
+            pointer-events: none;
+        }
+
+        :root[data-theme="dark"] .lamp-cord {
+            background: linear-gradient(#34302b, #4e4942);
+        }
+
+        /* the room: a full-width layer, clipped so the light never widens the page */
+        .lamp-room {
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 1500px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 6;
+            mix-blend-mode: screen;
+        }
+
+        /* zero-size pivots sitting on the bulb; they rotate about the top of
+           the cord so the light moves with the lamp */
+        .beam-sway,
+        .beam-swing {
+            position: absolute;
+            width: 0;
+            height: 0;
+            transform-origin: 0 calc(-1 * var(--bulb-y));
+        }
+
+        .beam-sway {
+            /* x of the lamp's centre: wrap centre + half the wrap - right offset - half the lamp */
+            left: calc(50% + min(1040px, 100% - 2 * var(--side-pad)) / 2 - var(--lamp-right) - var(--lamp-w) / 2);
+            top: var(--bulb-y);
+            animation: lampIdle 8s ease-in-out infinite;
+        }
+
+        .beam-swing {
+            left: 0;
+            top: 0;
+        }
+
+        .lamp-room.swing .beam-swing {
+            animation: lampNudge 1.5s cubic-bezier(.3, .6, .4, 1);
+        }
+
+        /* Light falling off with distance, brightest just under the bulb.
+           The shade blocks most light upward, so the top half is masked down. */
+        .lamp-pool {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2000px;
+            height: 1700px;
+            translate: -50% -30%;
+            background: radial-gradient(ellipse 760px 700px at 50% 30%,
+                    rgba(255, 208, 135, .24) 0%,
+                    rgba(255, 200, 125, .15) 5%,
+                    rgba(255, 194, 115, .09) 13%,
+                    rgba(255, 188, 105, .05) 25%,
+                    rgba(255, 184, 100, .026) 40%,
+                    rgba(255, 182, 96, .012) 58%,
+                    rgba(255, 180, 92, .004) 78%,
+                    rgba(255, 180, 90, 0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .22) 0%, rgba(0, 0, 0, .3) 22%, #000 36%);
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .22) 0%, rgba(0, 0, 0, .3) 22%, #000 36%);
+            opacity: 0;
+            transition: opacity .35s ease-in;
+        }
+
+        :root[data-theme="dark"] .lamp-pool {
+            opacity: 1;
+            transition: opacity .22s cubic-bezier(.2, .8, .3, 1);
+        }
+
+        /* keep the lamp's own fades during the page-wide colour transition */
+        html.theme-anim .lamp-lit,
+        html.theme-anim .lamp-glow,
+        html.theme-anim .lamp-pool,
+        html.theme-anim .lamp-swing {
+            transition: opacity .32s ease-in, filter .4s ease !important;
+        }
+
+        html.theme-anim[data-theme="dark"] .lamp-lit,
+        html.theme-anim[data-theme="dark"] .lamp-glow,
+        html.theme-anim[data-theme="dark"] .lamp-pool,
+        html.theme-anim[data-theme="dark"] .lamp-swing {
+            transition: opacity .16s cubic-bezier(.2, .8, .3, 1), filter .3s ease !important;
+        }
+
+        /* cursor-following hint: a tiny pill, only for fine pointers that can hover */
+        .lamp-tip {
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 30;
+            display: none;
+            padding: .34rem .62rem .38rem;
+            border-radius: 999px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 500;
+            letter-spacing: .01em;
+            line-height: 1;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            scale: .6;
+            rotate: -6deg;
+            transform-origin: 0 0;
+            transition: opacity .14s ease, scale .32s cubic-bezier(.3, 1.6, .5, 1), rotate .32s cubic-bezier(.3, 1.6, .5, 1);
+            will-change: transform;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .lamp-tip {
+                display: block;
+            }
+        }
+
+        .lamp-tip.show {
+            opacity: 1;
+            scale: 1;
+            rotate: 0deg;
+        }
+
+        :root[data-theme="dark"] .lamp-tip {
+            background: #fbf3e2;
+            color: #1a1a1a;
+        }
+
+        @keyframes lampIdle {
+
+            0%,
+            100% {
+                transform: rotate(-.5deg);
+            }
+
+            50% {
+                transform: rotate(.5deg);
+            }
+        }
+
+        /* a light tug on the cord: small swing, quickly settles */
+        @keyframes lampNudge {
+            0% {
+                transform: rotate(0);
+            }
+
+            16% {
+                transform: rotate(2.6deg);
+            }
+
+            40% {
+                transform: rotate(-1.5deg);
+            }
+
+            62% {
+                transform: rotate(.7deg);
+            }
+
+            82% {
+                transform: rotate(-.25deg);
+            }
+
+            100% {
+                transform: rotate(0);
+            }
         }
 
         /* ── projects ── */
@@ -430,7 +726,7 @@
             font-size: .7rem;
             letter-spacing: .14em;
             text-transform: uppercase;
-            color: #6f6f6f;
+            color: var(--muted);
             margin-bottom: 1.1rem;
         }
 
@@ -442,7 +738,7 @@
             padding: 1.4rem 1rem;
             margin: 0 -1rem;
             border-radius: 14px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid var(--line);
             margin-bottom: .5rem;
             transition: background 0s ease;
         }
@@ -450,14 +746,14 @@
 
 
         .project-item:last-of-type {
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--line);
         }
 
         .project-icon {
             width: 52px;
             height: 52px;
             border-radius: 13px;
-            background: #f4f4f4;
+            background: var(--icon-bg);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -500,7 +796,7 @@
         .project-name {
             font-size: 1.05rem;
             font-weight: 600;
-            color: #1a1a1a;
+            color: var(--text);
             text-decoration: none;
             text-underline-offset: 3px;
             text-decoration-thickness: 1px;
@@ -513,13 +809,13 @@
 
         /* Hovering anywhere on the card cues the link (no background flash). */
         .project-item:hover .project-name {
-            color: #2563eb;
+            color: var(--link);
             text-decoration: underline;
         }
 
         .project-sub {
             font-size: .9rem;
-            color: #6b6b6b;
+            color: var(--text-3);
             margin-top: .35rem;
             line-height: 1.55;
             max-width: 640px;
@@ -530,7 +826,7 @@
             margin-top: .6rem;
             font-size: .82rem;
             font-weight: 500;
-            color: #555;
+            color: var(--text-2);
         }
 
         .project-meta {
@@ -560,8 +856,8 @@
             width: auto;
             flex-shrink: 0;
             border-radius: 16px;
-            border: 1px solid #e7e2d6;
-            background: #fff;
+            border: 1px solid var(--shot-line);
+            background: var(--shot-bg);
             display: block;
             position: relative;
             z-index: 1;
@@ -595,8 +891,8 @@
         .project-shots.landscape img {
             height: 300px;
             background: transparent;
-            border: 1px solid rgba(0, 0, 0, .07);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px -6px rgba(0, 0, 0, .12);
+            border: 1px solid var(--shot-edge);
+            box-shadow: var(--shot-shadow);
         }
 
         /* Segmented control: a soft track with a white pill that slides
@@ -607,7 +903,7 @@
             gap: .15rem;
             padding: .25rem;
             margin-top: 1rem;
-            background: #f0efeb;
+            background: var(--track);
             border-radius: 999px;
         }
 
@@ -619,8 +915,8 @@
             width: 0;
             height: 0;
             border-radius: 999px;
-            background: #ffffff;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 3px 10px rgba(0, 0, 0, .07);
+            background: var(--pill);
+            box-shadow: var(--pill-shadow);
             transition: transform .32s cubic-bezier(.34, 1.15, .4, 1), width .32s cubic-bezier(.34, 1.15, .4, 1);
             pointer-events: none;
             z-index: 0;
@@ -637,17 +933,17 @@
             border-radius: 999px;
             border: none;
             background: transparent;
-            color: #77766e;
+            color: var(--muted);
             cursor: pointer;
             transition: color .2s ease;
         }
 
         .gallery-tab:hover {
-            color: #1a1a1a;
+            color: var(--text);
         }
 
         .gallery-tab.active {
-            color: #1a1a1a;
+            color: var(--text);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -788,7 +1084,7 @@
 
         .project-stack {
             font-size: .78rem;
-            color: #717171;
+            color: var(--muted);
             margin: 0;
             line-height: 1.4;
         }
@@ -814,19 +1110,19 @@
         }
 
         .status.active .status-dot {
-            background: #2a9a52;
+            background: var(--ok);
         }
 
         .status.active .status-text {
-            color: #1f7a40;
+            color: var(--ok-text);
         }
 
         .status.acquired .status-dot {
-            background: #c8951a;
+            background: var(--sold);
         }
 
         .status.acquired .status-text {
-            color: #946200;
+            color: var(--sold-text);
         }
 
         @keyframes rise {
@@ -859,11 +1155,104 @@
 </head>
 
 <body>
+    <!-- The lamp's pool of light, clipped to the page so it can never cause sideways scroll. -->
+    <div class="lamp-room" aria-hidden="true">
+        <span class="beam-sway"><span class="beam-swing"><span class="lamp-pool"></span></span></span>
+    </div>
+
     <div class="wrap">
 
-        <img class="clip" src="paper_clip.avif" alt="" />
+        <!-- Pendant lamp: click to switch light/dark. Pure decoration for crawlers. -->
+        <button class="lamp" type="button" aria-pressed="false" aria-label="Turn the lamp on (dark mode)">
+            <span class="lamp-sway">
+                <span class="lamp-swing">
+                    <span class="lamp-cord"></span>
+                    <span class="lamp-glow"></span>
+                    <svg class="lamp-body" viewBox="0 0 96 96" aria-hidden="true" focusable="false">
+                        <defs>
+                            <!-- matte black enamel: broad, soft highlight; no hard specular -->
+                            <linearGradient id="lampShade" x1="0" x2="1">
+                                <stop offset="0" stop-color="#0d0d0d" />
+                                <stop offset=".22" stop-color="#262626" />
+                                <stop offset=".4" stop-color="#3a3a39" />
+                                <stop offset=".62" stop-color="#1d1d1d" />
+                                <stop offset="1" stop-color="#090909" />
+                            </linearGradient>
+                            <linearGradient id="lampShadeTop" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#000" stop-opacity=".35" />
+                                <stop offset=".45" stop-color="#000" stop-opacity="0" />
+                            </linearGradient>
+                            <linearGradient id="lampCap" x1="0" x2="1">
+                                <stop offset="0" stop-color="#141414" />
+                                <stop offset=".45" stop-color="#4a4a48" />
+                                <stop offset="1" stop-color="#101010" />
+                            </linearGradient>
+                            <!-- white enamel interior: shaded when off, lit when on -->
+                            <radialGradient id="lampInnerOff" cx=".5" cy=".15" r=".9">
+                                <stop offset="0" stop-color="#cfcbc3" />
+                                <stop offset=".6" stop-color="#8e8a83" />
+                                <stop offset="1" stop-color="#4a4844" />
+                            </radialGradient>
+                            <radialGradient id="lampInnerOn" cx=".5" cy=".15" r=".9">
+                                <stop offset="0" stop-color="#fffaf0" />
+                                <stop offset=".45" stop-color="#ffe6ad" />
+                                <stop offset="1" stop-color="#d99a45" />
+                            </radialGradient>
+                            <!-- clear glass -->
+                            <radialGradient id="lampGlassOff" cx=".38" cy=".42" r=".7">
+                                <stop offset="0" stop-color="#ffffff" />
+                                <stop offset=".6" stop-color="#ece8e0" />
+                                <stop offset="1" stop-color="#b9b2a5" />
+                            </radialGradient>
+                            <radialGradient id="lampGlassOn" cx=".5" cy=".62" r=".62">
+                                <stop offset="0" stop-color="#ffe9b0" />
+                                <stop offset=".5" stop-color="#ffc867" />
+                                <stop offset="1" stop-color="#e8912e" />
+                            </radialGradient>
+                            <filter id="lampFilGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="1.4" result="b" />
+                                <feMerge>
+                                    <feMergeNode in="b" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
 
-        <p class="hey">Hi, glad you&rsquo;re here.</p>
+                        <!-- canopy cup where the cord enters -->
+                        <path d="M43 0 H53 L54 9 H42 Z" fill="url(#lampCap)" />
+                        <!-- shade -->
+                        <path d="M48 8 C29 8 13 26 9 58 L87 58 C83 26 67 8 48 8 Z" fill="url(#lampShade)" />
+                        <path d="M48 8 C29 8 13 26 9 58 L87 58 C83 26 67 8 48 8 Z" fill="url(#lampShadeTop)" />
+                        <!-- interior seen through the opening -->
+                        <ellipse cx="48" cy="58" rx="38.5" ry="5.6" fill="url(#lampInnerOff)" />
+                        <ellipse class="lamp-lit" cx="48" cy="58" rx="38.5" ry="5.6" fill="url(#lampInnerOn)" />
+
+                        <!-- front lip of the shade; the bulb is drawn after it so it hangs in front -->
+                        <path d="M9.5 58 A38.5 5.6 0 0 0 86.5 58" fill="none" stroke="#050505" stroke-width="1.3" />
+                        <!-- Edison bulb: neck tucked inside the shade, pear-shaped glass below -->
+                        <g class="lamp-bulb">
+                            <path d="M43.5 52 H52.5 V58.5 C52.5 61.5 60.5 64.5 60.5 72 C60.5 79 54.8 84 48 84 C41.2 84 35.5 79 35.5 72 C35.5 64.5 43.5 61.5 43.5 58.5 Z"
+                                fill="url(#lampGlassOff)" stroke="#000" stroke-opacity=".16" stroke-width=".6" />
+                            <path class="lamp-lit"
+                                d="M43.5 52 H52.5 V58.5 C52.5 61.5 60.5 64.5 60.5 72 C60.5 79 54.8 84 48 84 C41.2 84 35.5 79 35.5 72 C35.5 64.5 43.5 61.5 43.5 58.5 Z"
+                                fill="url(#lampGlassOn)" />
+                            <!-- support wires + filament -->
+                            <path d="M46 58 V70.5 M50 58 V70.5" stroke="#8d877c" stroke-width=".55" fill="none" />
+                            <path d="M45.4 70.5 C46 67.5 46.9 73.5 47.4 70.5 C48 67.5 48.9 73.5 49.4 70.5 C50 67.5 50.6 72 50.8 70.5"
+                                stroke="#7a7266" stroke-width=".8" fill="none" stroke-linecap="round" />
+                            <!-- lit: amber bloom around a white-hot filament -->
+                            <path class="lamp-lit" d="M45.4 70.5 C46 67.5 46.9 73.5 47.4 70.5 C48 67.5 48.9 73.5 49.4 70.5 C50 67.5 50.6 72 50.8 70.5" stroke="#ff9d2e" stroke-width="3" fill="none"
+                                stroke-linecap="round" opacity=".8" filter="url(#lampFilGlow)" />
+                            <path class="lamp-lit" d="M45.4 70.5 C46 67.5 46.9 73.5 47.4 70.5 C48 67.5 48.9 73.5 49.4 70.5 C50 67.5 50.6 72 50.8 70.5" stroke="#fffdf4" stroke-width="1" fill="none"
+                                stroke-linecap="round" />
+                            <!-- glass reflection -->
+                            <path d="M39.5 69 C39.5 65.5 41.5 63.5 43 62.6" stroke="#fff" stroke-opacity=".85"
+                                stroke-width="1.3" fill="none" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                </span>
+            </span>
+        </button>
 
         <p class="lede">I'm Shajin KP. I'm <span id="age">20</span>, and I design, build and ship products with
             taste.</p>
@@ -1103,6 +1492,9 @@
 
     </div>
 
+    <!-- Cursor-following hint for the lamp (decorative; the button has its own aria-label). -->
+    <span class="lamp-tip" aria-hidden="true"></span>
+
     <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image viewer">
         <button class="lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
         <button class="lightbox-nav prev" type="button" aria-label="Previous image">&#8249;</button>
@@ -1113,6 +1505,134 @@
     <script>
         /* Progressive enhancement only — nothing here affects SEO.
            All content above is static HTML that crawlers read directly. */
+
+        // Pendant lamp: click to switch between light and dark.
+        (function () {
+            const root = document.documentElement;
+            const lamp = document.querySelector('.lamp');
+            const meta = document.querySelector('meta[name="theme-color"]');
+            const room = document.querySelector('.lamp-room');
+            if (!lamp) return;
+            let animTimer;
+            // A wall-switch "click", synthesised with Web Audio so there's no file to load:
+            // a short filtered noise snap plus a faint low knock from the switch body.
+            let audio;
+            function playClick(on) {
+                try {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    if (!AC) return;
+                    audio = audio || new AC();
+                    if (audio.state === 'suspended') audio.resume();
+                    const t = audio.currentTime + .005;
+
+                    const len = Math.floor(audio.sampleRate * .03);
+                    const buf = audio.createBuffer(1, len, audio.sampleRate);
+                    const data = buf.getChannelData(0);
+                    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+                    const noise = audio.createBufferSource();
+                    noise.buffer = buf;
+                    const band = audio.createBiquadFilter();
+                    band.type = 'bandpass';
+                    band.frequency.value = on ? 3200 : 2500;
+                    band.Q.value = 1.1;
+                    const snap = audio.createGain();
+                    snap.gain.value = .5;
+                    noise.connect(band).connect(snap).connect(audio.destination);
+                    noise.start(t);
+
+                    const osc = audio.createOscillator();
+                    osc.frequency.setValueAtTime(on ? 190 : 150, t);
+                    osc.frequency.exponentialRampToValueAtTime(70, t + .05);
+                    const knock = audio.createGain();
+                    knock.gain.setValueAtTime(.0001, t);
+                    knock.gain.exponentialRampToValueAtTime(.22, t + .004);
+                    knock.gain.exponentialRampToValueAtTime(.0001, t + .06);
+                    osc.connect(knock).connect(audio.destination);
+                    osc.start(t);
+                    osc.stop(t + .07);
+                } catch (e) { }
+            }
+
+            function apply(theme) {
+                const dark = theme === 'dark';
+                root.setAttribute('data-theme', theme);
+                lamp.setAttribute('aria-pressed', String(dark));
+                lamp.setAttribute('aria-label', dark ? 'Turn the lamp off (light mode)' : 'Turn the lamp on (dark mode)');
+                if (meta) meta.setAttribute('content', dark ? '#11100e' : '#ffffff');
+            }
+
+            apply(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+            // ── Hint that follows the cursor while it's over the lamp.
+            const tip = document.querySelector('.lamp-tip');
+            const easeTip = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let tipOn = false, tipRaf = 0, mx = 0, my = 0, px = 0, py = 0;
+
+            function tipText() {
+                if (tip) tip.textContent = root.getAttribute('data-theme') === 'dark' ? 'lights off?' : 'lights on?';
+            }
+
+            // where the label wants to be: below-right of the cursor, flipped
+            // to the left/up when it would run off the screen
+            function tipTarget() {
+                const w = tip.offsetWidth, h = tip.offsetHeight;
+                let x = mx + 16, y = my + 20;
+                if (x + w > window.innerWidth - 8) x = mx - 14 - w;
+                if (y + h > window.innerHeight - 8) y = my - 14 - h;
+                return [x, y];
+            }
+
+            function tipFrame() {
+                const t = tipTarget();
+                const k = easeTip ? .28 : 1;
+                px += (t[0] - px) * k;
+                py += (t[1] - py) * k;
+                tip.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0)';
+                const settled = Math.abs(t[0] - px) < .3 && Math.abs(t[1] - py) < .3;
+                tipRaf = (tipOn || !settled) ? requestAnimationFrame(tipFrame) : 0;
+            }
+
+            if (tip) {
+                lamp.addEventListener('pointerenter', function (e) {
+                    if (e.pointerType !== 'mouse') return;
+                    tipText();
+                    mx = e.clientX; my = e.clientY;
+                    const t = tipTarget();
+                    px = t[0]; py = t[1];   // appear at the cursor, then follow
+                    tipOn = true;
+                    tip.classList.add('show');
+                    if (!tipRaf) tipRaf = requestAnimationFrame(tipFrame);
+                });
+                lamp.addEventListener('pointermove', function (e) {
+                    mx = e.clientX; my = e.clientY;
+                });
+                lamp.addEventListener('pointerleave', function () {
+                    tipOn = false;
+                    tip.classList.remove('show');
+                });
+            }
+
+            lamp.addEventListener('click', function () {
+                const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                root.classList.add('theme-anim');
+                playClick(next === 'dark');
+                apply(next);
+                tipText();
+
+                try { localStorage.setItem('theme', next); } catch (e) { }
+
+                // restart the swing even on rapid clicks
+                [lamp, room].forEach(function (el) {
+                    if (!el) return;
+                    el.classList.remove('swing');
+                    void el.offsetWidth;
+                    el.classList.add('swing');
+                });
+
+                clearTimeout(animTimer);
+                animTimer = setTimeout(function () { root.classList.remove('theme-anim'); }, 500);
+            });
+        })();
 
         // Live age in the intro line.
         (function () {
