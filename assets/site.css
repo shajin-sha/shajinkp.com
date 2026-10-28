@@ -273,6 +273,26 @@ h1 {
     margin-bottom: 1.6rem;
 }
 
+/* A single proof image inside a post, like a sale notification. */
+.receipt {
+    margin: 1.8rem 0;
+}
+
+.receipt img {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--shot-edge), var(--shot-shadow);
+}
+
+.receipt figcaption {
+    margin-top: .7rem;
+    font-size: .8rem;
+    color: var(--muted);
+}
+
 /* Screenshot grid. */
 .shots {
     display: grid;
