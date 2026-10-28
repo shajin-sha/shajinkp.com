@@ -6,11 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>How I bootstrapped DesignLumo to an exit | Shajin KP</title>
     <meta name="description"
-        content="How I built DesignLumo, an AI design tool, solo and part-time next to a full-time job, grew it to about $400 MRR with organic marketing only, and sold it." />
+        content="How I built DesignLumo, a truly editable AI design tool, solo and part-time, grew it to about $400 MRR with $0 on ads, and sold it." />
     <meta name="author" content="Shajin KP" />
-    <!-- DRAFT: keep out of search until the highlighted gaps are filled, then switch to "index, follow"
-         and add this URL to sitemap.xml. -->
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="https://shajinkp.com/writing/bootstrapping-designlumo/" />
     <script>
         (function () {
@@ -44,6 +42,7 @@
         "image": "https://shajinkp.com/project_images/designlumo/designlumo-3.webp",
         "author": { "@type": "Person", "@id": "https://shajinkp.com/#person", "name": "Shajin KP", "url": "https://shajinkp.com/" },
         "about": { "@id": "https://shajinkp.com/designlumo/#app" },
+        "datePublished": "2026-10-28",
         "inLanguage": "en"
     }
     </script>
@@ -64,52 +63,65 @@
             <span class="crumb">/ Writing</span>
         </nav>
 
-        <p class="draft-note"><strong>Draft.</strong> Highlighted bits are gaps for Shajin to fill in. This page is
-            hidden from search engines until they're done.</p>
-
         <article>
             <p class="eyebrow">Story</p>
             <h1>How I bootstrapped DesignLumo to an exit, part-time with $0 on ads</h1>
-            <p class="post-meta"><em class="todo">Publish date</em> · About 4 min read</p>
+            <p class="post-meta">By Shajin KP · <time datetime="2026-10-28">Oct 28, 2026</time> · About 4 min read</p>
 
             <div class="prose">
-                <p>DesignLumo was my first real product, and my first exit. I built it alone, from scratch, in the hours
-                    around a full-time job. It never had a marketing budget. Every customer came from organic
-                    marketing, and it still grew to around <strong>$400 in monthly recurring revenue</strong> and
-                    <strong>$1.5K+ in total revenue</strong> before it was acquired.</p>
+                <p>DesignLumo was my first real product, and my first exit. I built it alone, part-time alongside a full-time job, and it never had a marketing budget. It still grew to around <strong>$400 in monthly
+                    recurring revenue</strong> and <strong>$1.5K+ in total revenue</strong> before it was acquired.</p>
 
-                <p>This is how that happened, and what I'd tell anyone trying the same thing.</p>
+                <p>This is how that happened, and what I learned along the way.</p>
 
-                <h2>Why I built it</h2>
-                <p><em class="todo">When did you start, and what problem made you want to build an AI design tool?
-                        Who was it for?</em></p>
+                <h2>The problem: AI images you can't edit</h2>
+                <p>By 2025, AI was already generating good-looking images. The trouble started the moment you tried to
+                    change one. Ask it to fix a single area and something else in the image breaks. You can't move one
+                    piece of text, swap a color or nudge a single element on its own, because the whole design is one
+                    flat picture.</p>
+                <p>I kept running into this myself. So the question became simple: why can't we build something that
+                    is <strong>truly editable</strong>? Not AI replacing the designer, but AI and a human working on the
+                    same design together. The AI does the heavy lifting, and you stay in control of every detail.</p>
+                <p>I started building DesignLumo in <strong>August 2025</strong>, for small businesses and
+                    marketers.</p>
 
                 <h2>Building it part-time</h2>
-                <p>I had a full-time job the whole way through, so DesignLumo got evenings and weekends. That forced
-                    me to keep it small: one person, one stack (React, Express, and Fabric.js for the editor, with
-                    Gemini and the OpenAI API doing the generation), and only the features that mattered.</p>
-                <p>The core idea was simple: describe a design, get a few styles back, and then actually edit the one
-                    you like. Most AI image tools give you a flat picture. DesignLumo gives you a real layout with
-                    text, colors and elements you can change, plus brand kits so everything stays on-brand.</p>
-                <p><em class="todo">How long did it take to ship the first version? What was hardest to build?</em></p>
+                <p>My first plan was a mobile app, but I pivoted to the web. I was working a full-time job the whole time, so DesignLumo was a part-time project, and the first version took about <strong>two to three months</strong> to build.</p>
+                <p>The idea was easy to say and hard to build: describe a design, get a few styles back, and then
+                    actually edit the one you like. Every result is a real layout with separate text, colors and
+                    elements, not a flattened image. Brand kits keep everything on-brand, and you can export to PNG, JPG,
+                    WebP, SVG or PDF.</p>
+                <p>The hardest part by far was <strong>making AI output editable</strong>: turning what a model
+                    generates into structured layers, then building the editor logic on top so every piece behaves the
+                    way a designer expects. The stack was React and Express, with Fabric.js powering the editor and
+                    Gemini and the OpenAI API doing the generation.</p>
 
                 <h2>The first customer was a stranger in Ireland</h2>
                 <p>My first paying customer wasn't a friend or someone from my network. It was a complete stranger
-                    from Ireland. That moment mattered more than any revenue number since: someone I'd never met found
-                    the product, trusted it, and paid for it.</p>
-                <p><em class="todo">How did they find DesignLumo? Do you remember what they were designing?</em></p>
+                    from Ireland. That felt really good: someone I'd never met found the product, trusted it, and paid for it.</p>
 
                 <h2>Growing with $0 on ads</h2>
-                <p>I didn't spend anything on marketing. All of DesignLumo's growth came from organic channels.</p>
-                <p><em class="todo">Which channels worked: SEO, Product Hunt, X, Reddit, communities, word of mouth?
-                        Anything that clearly didn't work?</em></p>
+                <p>I didn't spend anything on marketing. Growth came from three organic channels:</p>
+                <ul>
+                    <li><strong>A Product Hunt launch</strong></li>
+                    <li><strong>Reddit</strong></li>
+                    <li><strong>SEO</strong></li>
+                </ul>
+                <p>It took around <strong>four to five months</strong> to reach about $400 MRR, built entirely on
+                    those channels.</p>
 
                 <h2>The exit</h2>
-                <p><em class="todo">How did the acquisition come about? Roughly when, did they reach out to you or
-                        did you list it, and what did it feel like? Share only what you're comfortable with.</em></p>
+                <p>From there, DesignLumo was acquired. It started as a problem I had myself, I built it solo and
+                    part-time, and it became my first startup exit.</p>
 
-                <h2>What I'd tell someone starting now</h2>
-                <p><em class="todo">Two or three lessons in your own words, e.g. what you'd do differently.</em></p>
+                <h2>What I learned</h2>
+                <ul>
+                    <li><strong>The need is real.</strong> People want AI that helps them design, not AI that takes
+                        the design away from them. Editable, human-in-the-loop output is something the market is
+                        actually asking for.</li>
+                    <li><strong>AI costs are the hard part of the business.</strong> A product like this calls models
+                        constantly, and those costs grow with every user.</li>
+                </ul>
             </div>
         </article>
 

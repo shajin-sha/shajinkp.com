@@ -14,6 +14,8 @@
 
 - [Winning two national hackathons solo, against teams of college students](https://shajinkp.com/writing/two-national-hackathons/): Shajin's two national-level hackathon wins, including 1st prize at Conqueror (IHRD Tharang, Feb 2023), as the only individual participant.
 
+- [How I bootstrapped DesignLumo to an exit, part-time with $0 on ads](https://shajinkp.com/writing/bootstrapping-designlumo/): Building a truly editable AI design tool solo from August 2025, growing it to about $400 MRR via Product Hunt, Reddit and SEO, and selling it.
+
 ## Links
 
 - [Website](https://shajinkp.com/)
