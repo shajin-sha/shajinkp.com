@@ -1651,6 +1651,32 @@
             opacity: .8;
         }
 
+        /* wide variant: full menu-bar shots with the Mac frame, never cropped.
+           Two columns on every screen: the first shot spans both, then a 2×2
+           block whose last tile carries the "+N" badge. */
+        .project-shots.landscape.wide {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .project-shots.landscape.wide img,
+        .project-shots.landscape.wide img:first-child {
+            aspect-ratio: 2400 / 743;
+            height: auto;
+            object-fit: contain;
+            background: #fff;
+        }
+
+        .project-shots.landscape.wide img:first-child {
+            grid-column: 1 / -1;
+            grid-row: auto;
+        }
+
+        .project-shots.landscape.wide img:nth-of-type(5),
+        .project-shots.landscape.wide .shots-more {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
         /* the inactive tab's panel stays hidden despite the grid/flex rules above */
         .project-shots[hidden] {
             display: none !important;
@@ -2120,34 +2146,34 @@
                         <img src="project_images/sendthis/sendthis-ios-6.webp" alt="SendThis iOS app: account with plan, storage and theme settings"
                             loading="lazy" width="603" height="1311" />
                     </div>
-                    <div class="project-shots landscape" data-panel="macos">
+                    <div class="project-shots landscape wide" data-panel="macos">
                         <img src="project_images/sendthis/sendthis-mac-1.webp"
-                            alt="SendThis macOS app: drop area opening from the notch: drop files here or click to browse" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: drop area opening from the notch: drop files here or click to browse" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-2.webp"
-                            alt="SendThis macOS app: panel location settings: notch, menu bar or both" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: panel location settings: notch, menu bar or both" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-3.webp"
-                            alt="SendThis macOS app: all sent: link ready to copy right from the notch" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: all sent: link ready to copy right from the notch" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-4.webp"
-                            alt="SendThis macOS app: upload progress for a four-file transfer with pause" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: upload progress for a four-file transfer with pause" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-5.webp"
-                            alt="SendThis macOS app: transfers list with search for recent sends" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: transfers list with search for recent sends" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-6.webp"
-                            alt="SendThis macOS app: file browser for a sent folder with preview, download and copy link" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: file browser for a sent folder with preview, download and copy link" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-7.webp"
-                            alt="SendThis macOS app: transfer actions to rename, allow downloads or delete" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: transfer actions to rename, allow downloads or delete" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-8.webp"
-                            alt="SendThis macOS app: resting in the MacBook notch, out of the way" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: resting in the MacBook notch, out of the way" loading="lazy" width="2400"
+                            height="743" />
                         <img src="project_images/sendthis/sendthis-mac-9.webp"
-                            alt="SendThis macOS app: sign-in with Apple, Google or email" loading="lazy" width="1387"
-                            height="850" />
+                            alt="SendThis macOS app: sign-in with Apple, Google or email" loading="lazy" width="2400"
+                            height="743" />
                     </div>
                 </div>
             </article>
