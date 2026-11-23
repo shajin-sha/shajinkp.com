@@ -4,7 +4,7 @@
 
 ## Projects
 
-- [SendThis](https://sendthis.com): A Latelogic product that Shajin leads and built end to end. Send large files with a link. Share and track file transfers on web and iOS, with no ads on either end.
+- [SendThis](https://sendthis.com): A Latelogic product that Shajin leads and built end to end. Send large files with a link. Share and track file transfers on web, iOS and macOS, with no ads on either end.
 - [Parceler](https://apps.apple.com/us/app/parceler-parcel-tracking-app/id6772164367): A Latelogic iOS parcel-tracking app that Shajin started and built with the team. Add a tracking number or scan a barcode to follow deliveries across hundreds of carriers.
 - [LargeFileTransfer](https://largefiletransfer.com): A company product Shajin worked on and helped scale. Send big files fast and securely. Drop a file, share a link.
 - [DesignLumo](https://shajinkp.com/designlumo/) ([site](https://designlumo.com)): Shajin's own startup, built solo from scratch. An AI design tool for editable, on-brand visuals for ads, social posts and posters. Bootstrapped and acquired.
